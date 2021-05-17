@@ -14,6 +14,7 @@ public class Driver {
         Input i = new Input();
         UserInterface ui = new UserInterface(p, i);
         ui.run();
+        i.close();
         p.writeToFile(persistFilename);
     }
 }
