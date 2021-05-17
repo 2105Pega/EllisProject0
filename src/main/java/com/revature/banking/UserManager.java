@@ -64,7 +64,7 @@ public class UserManager {
         return false;
     }
 
-    public String hashPassword(String password) {
+    private String hashPassword(String password) {
         String hash = "";
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
@@ -77,7 +77,7 @@ public class UserManager {
         return hash;
     }
 
-    public String bytesToHex(byte[] bytes) {
+    private String bytesToHex(byte[] bytes) {
         StringBuilder s = new StringBuilder("");
         for (byte b : bytes) {
             byte upperNibble = (byte)(b & 0x0F);
@@ -89,7 +89,7 @@ public class UserManager {
         return s.toString();
     }
 
-    public Character nibbleToChar(byte b) {
+    private Character nibbleToChar(byte b) {
         switch (b) {
             case 0x0:
                 return '0';

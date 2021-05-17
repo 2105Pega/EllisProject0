@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserManagerTest {
@@ -62,25 +64,34 @@ class UserManagerTest {
     }
 
     @Test
-    void hashPassword() {
+    void hashPassword() throws Exception {
         String password = "password";
-        String passwordHash = um.hashPassword(password);
+        Method hashPassword = UserManager.class.getDeclaredMethod("hashPassword", String.class);
+        hashPassword.setAccessible(true);
+        String passwordHash = (String) hashPassword.invoke(um, password);
         String correctHash = "5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8";
         assertEquals(passwordHash, correctHash);
     }
 
     @Test
-    void bytesToHex() {
+    void bytesToHex() throws Exception {
+        Method bytesToHex = UserManager.class.getDeclaredMethod("bytesToHex", byte[].class);
+        bytesToHex.setAccessible(true);
+
         byte bytes[] = { (byte) 0xAB, (byte) 0xCD, (byte)0xEF };
-        String s = um.bytesToHex(bytes);
+        String s = (String) bytesToHex.invoke(um, bytes);
         assertEquals(s, "ABCDEF");
     }
 
     @Test
-    void nibbleToChar() {
+    void nibbleToChar() throws Exception {
+        Method nibbleToChar = UserManager.class.getDeclaredMethod("nibbleToChar", Character.class);
+        nibbleToChar.setAccessible(true);
+
         byte nibble = (byte) 0x5;
         byte nibble2 = (byte) 0xF;
-        assertEquals(um.nibbleToChar(nibble), '5');
-        assertEquals(um.nibbleToChar(nibble2), 'F');
+
+        assertEquals((Character) nibbleToChar.invoke(um, nibble), '5');
+        assertEquals((Character) nibbleToChar.invoke(um, nibble), 'F');
     }
 }
