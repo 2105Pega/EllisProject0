@@ -1,4 +1,7 @@
-package com.revature.banking;
+package com.revature.banking.dao;
+
+import com.revature.banking.Transaction;
+import com.revature.banking.dao.Dao;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,7 +9,7 @@ import java.util.ArrayList;
 public class TransactionDao implements Dao<Transaction, Integer>, Serializable {
     private ArrayList<Transaction> transactions;
 
-    TransactionDao() {
+    public TransactionDao() {
         transactions = new ArrayList<Transaction>();
     }
 

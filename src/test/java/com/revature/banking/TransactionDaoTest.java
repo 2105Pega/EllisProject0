@@ -1,12 +1,11 @@
 package com.revature.banking;
 
+import com.revature.banking.dao.TransactionDao;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class TransactionDaoTest {
     TransactionDao transactionDao;

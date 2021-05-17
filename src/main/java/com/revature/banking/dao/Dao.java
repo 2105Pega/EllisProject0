@@ -1,4 +1,4 @@
-package com.revature.banking;
+package com.revature.banking.dao;
 
 import java.util.ArrayList;
 import java.util.List;

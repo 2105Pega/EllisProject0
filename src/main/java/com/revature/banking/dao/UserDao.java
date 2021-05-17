@@ -1,13 +1,15 @@
-package com.revature.banking;
+package com.revature.banking.dao;
+
+import com.revature.banking.User;
+import com.revature.banking.dao.Dao;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class UserDao implements Dao<User, String>, Serializable {
     private ArrayList<User> users;
 
-    UserDao() {
+    public UserDao() {
         users = new ArrayList<User>();
     }
 

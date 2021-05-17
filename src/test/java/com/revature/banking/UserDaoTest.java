@@ -1,5 +1,6 @@
 package com.revature.banking;
 
+import com.revature.banking.dao.UserDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

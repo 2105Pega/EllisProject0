@@ -1,4 +1,6 @@
-package com.revature.banking;
+package com.revature.banking.dao;
+
+import com.revature.banking.Account;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,7 +9,7 @@ import java.util.UUID;
 public class AccountDao implements Dao<Account, UUID>, Serializable {
     private ArrayList<Account> accounts;
 
-    AccountDao() {
+    public AccountDao() {
         accounts = new ArrayList<Account>();
     }
 
