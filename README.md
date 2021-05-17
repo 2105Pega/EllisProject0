@@ -1,8 +1,8 @@
-#Project 0 Banking App
+# Project 0 Banking App
 
-##Class Hierarchy
+## Class Hierarchy
 
-###Models
+### Models
 
 - User
 - Client : User
@@ -13,7 +13,7 @@
 - Withdraw : Transaction
 - Transfer : Transaction
 
-###Services
+### Services
 - UserManager
 - TransactionManager
 - AccountManager
@@ -25,6 +25,6 @@
 - Input
 - Persistence
 
-###Controller
+### Controller
 - Driver
 - UserInterface
