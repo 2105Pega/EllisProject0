@@ -1,6 +1,5 @@
-package com.revature.banking;
+package com.revature.banking.models;
 
-import com.revature.banking.models.Client;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.revature.banking;
+package com.revature.banking.services;
 
 import com.revature.banking.models.Account;
 import com.revature.banking.models.Client;
@@ -16,7 +16,7 @@ public class UserManager {
     static Logger logger = LogManager.getLogger(UserManager.class);
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
-    UserManager(Persistence p) {
+    public UserManager(Persistence p) {
         this.p = p;
     }
 
@@ -59,7 +59,7 @@ public class UserManager {
 
         for (User user : users) {
             if (user.getUsername().equals(username)) {
-                if (user.getClass().getName().equals("com.revature.banking.Client")) {
+                if (user.getClass().getName().equals("com.revature.banking.models.Client")) {
                     return true;
                 }
             }

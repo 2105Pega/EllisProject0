@@ -1,5 +1,6 @@
-package com.revature.banking;
+package com.revature.banking.services;
 
+import com.revature.banking.services.Format;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

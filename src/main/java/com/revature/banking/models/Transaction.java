@@ -8,7 +8,7 @@ public abstract class Transaction implements Serializable {
     private final UUID account;
     private final int id;
     private Type type;
-    enum Type {
+    public enum Type {
         WITHDRAW,
         DEPOSIT,
         TRANSFER

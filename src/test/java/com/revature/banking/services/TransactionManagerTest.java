@@ -1,6 +1,9 @@
-package com.revature.banking;
+package com.revature.banking.services;
 
 import com.revature.banking.models.Account;
+import com.revature.banking.services.AccountManager;
+import com.revature.banking.services.Persistence;
+import com.revature.banking.services.TransactionManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

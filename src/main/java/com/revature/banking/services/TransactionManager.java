@@ -1,4 +1,4 @@
-package com.revature.banking;
+package com.revature.banking.services;
 
 import com.revature.banking.models.Account;
 import com.revature.banking.models.Deposit;
@@ -13,7 +13,7 @@ public class TransactionManager {
     Persistence p;
     static Logger logger = LogManager.getLogger(TransactionManager.class);
 
-    TransactionManager(Persistence p) {
+    public TransactionManager(Persistence p) {
         this.p = p;
     }
 

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class Account implements Serializable {
-    enum Status {
+    public enum Status {
         PENDING,
         APPROVED,
         CANCELLED

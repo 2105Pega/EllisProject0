@@ -1,8 +1,9 @@
-package com.revature.banking;
+package com.revature.banking.services;
 
+import com.revature.banking.services.Persistence;
+import com.revature.banking.services.UserManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;

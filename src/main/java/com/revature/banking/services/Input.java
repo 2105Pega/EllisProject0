@@ -1,4 +1,4 @@
-package com.revature.banking;
+package com.revature.banking.services;
 
 import java.util.Scanner;
 

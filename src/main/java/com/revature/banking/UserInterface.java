@@ -1,6 +1,7 @@
 package com.revature.banking;
 
 import com.revature.banking.models.*;
+import com.revature.banking.services.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +105,7 @@ public class UserInterface {
     }
 
     private void session(User user) {
-        if (user.getClass().getName().equals("com.revature.banking.Client")) {
+        if (user.getClass().getName().equals("com.revature.banking.models.Client")) {
             clientSession((Client) user);
         } else {
             employeeSession((Employee) user);
@@ -156,7 +157,7 @@ public class UserInterface {
     private void viewClients() {
         System.out.println("Existing clients are");
         for (User user : p.getUsers()) {
-            if (user.getClass().getName().equals("com.revature.banking.Client")) {
+            if (user.getClass().getName().equals("com.revature.banking.models.Client")) {
                 System.out.println(user.getUsername());
             }
         }

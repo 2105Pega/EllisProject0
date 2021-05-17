@@ -1,4 +1,4 @@
-package com.revature.banking;
+package com.revature.banking.services;
 
 import com.revature.banking.dao.*;
 import com.revature.banking.models.Account;

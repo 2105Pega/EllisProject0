@@ -5,7 +5,7 @@ import com.revature.banking.models.User;
 import java.io.Serializable;
 
 public class Employee extends User implements Serializable {
-    Employee(String username, String passwordHash) {
+    public Employee(String username, String passwordHash) {
         super(username, passwordHash);
     }
 }
