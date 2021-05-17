@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserManagerTest {
     Persistence p;
     UserManager um;
+
     @BeforeEach
     void setUp() {
         p = new Persistence();
@@ -58,5 +59,28 @@ class UserManagerTest {
     void getAccountNames() {
         um.createClient("bob", "password");
         Assertions.assertEquals(um.getAccountNames("bob").size(), 0);
+    }
+
+    @Test
+    void hashPassword() {
+        String password = "password";
+        String passwordHash = um.hashPassword(password);
+        String correctHash = "5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8";
+        assertEquals(passwordHash, correctHash);
+    }
+
+    @Test
+    void bytesToHex() {
+        byte bytes[] = { (byte) 0xAB, (byte) 0xCD, (byte)0xEF };
+        String s = um.bytesToHex(bytes);
+        assertEquals(s, "ABCDEF");
+    }
+
+    @Test
+    void nibbleToChar() {
+        byte nibble = (byte) 0x5;
+        byte nibble2 = (byte) 0xF;
+        assertEquals(um.nibbleToChar(nibble), '5');
+        assertEquals(um.nibbleToChar(nibble2), 'F');
     }
 }
