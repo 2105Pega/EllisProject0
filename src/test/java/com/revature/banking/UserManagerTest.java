@@ -85,13 +85,13 @@ class UserManagerTest {
 
     @Test
     void nibbleToChar() throws Exception {
-        Method nibbleToChar = UserManager.class.getDeclaredMethod("nibbleToChar", Character.class);
+        Method nibbleToChar = UserManager.class.getDeclaredMethod("nibbleToChar", byte.class);
         nibbleToChar.setAccessible(true);
 
         byte nibble = (byte) 0x5;
         byte nibble2 = (byte) 0xF;
 
         assertEquals((Character) nibbleToChar.invoke(um, nibble), '5');
-        assertEquals((Character) nibbleToChar.invoke(um, nibble), 'F');
+        assertEquals((Character) nibbleToChar.invoke(um, nibble2), 'F');
     }
 }

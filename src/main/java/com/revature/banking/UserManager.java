@@ -2,7 +2,6 @@ package com.revature.banking;
 
 import org.apache.logging.log4j.Logger;
 
-import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
