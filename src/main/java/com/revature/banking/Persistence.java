@@ -1,6 +1,10 @@
 package com.revature.banking;
 
 import com.revature.banking.dao.*;
+import com.revature.banking.models.Account;
+import com.revature.banking.models.Transaction;
+import com.revature.banking.models.User;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

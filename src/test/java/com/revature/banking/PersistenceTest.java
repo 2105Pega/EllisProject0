@@ -1,12 +1,11 @@
 package com.revature.banking;
 
+import com.revature.banking.models.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class PersistenceTest {
     Persistence p;

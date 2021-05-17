@@ -1,5 +1,9 @@
 package com.revature.banking;
 
+import com.revature.banking.models.Account;
+import com.revature.banking.models.Client;
+import com.revature.banking.models.Employee;
+import com.revature.banking.models.User;
 import org.apache.logging.log4j.Logger;
 
 import java.security.MessageDigest;

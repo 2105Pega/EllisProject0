@@ -1,9 +1,9 @@
-package com.revature.banking;
+package com.revature.banking.models;
 
 import java.util.UUID;
 
 public class Deposit extends Transaction {
-    Deposit(double amount, UUID uuid) {
+    public Deposit(double amount, UUID uuid) {
         super(amount, uuid, Type.DEPOSIT);
     }
 }

@@ -1,7 +1,6 @@
 package com.revature.banking.dao;
 
-import com.revature.banking.Transaction;
-import com.revature.banking.dao.Dao;
+import com.revature.banking.models.Transaction;
 
 import java.io.Serializable;
 import java.util.ArrayList;

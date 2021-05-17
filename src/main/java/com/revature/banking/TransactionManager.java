@@ -1,5 +1,9 @@
 package com.revature.banking;
 
+import com.revature.banking.models.Account;
+import com.revature.banking.models.Deposit;
+import com.revature.banking.models.Transfer;
+import com.revature.banking.models.Withdraw;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -1,5 +1,7 @@
 package com.revature.banking;
 
+import com.revature.banking.models.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -210,7 +212,7 @@ public class UserInterface {
         getDouble();
         UUID uuid = account.getUuid();
         if (tm.deposit(doubleInput, uuid)) {
-            System.out.println("Withdraw successful.");
+            System.out.println("Deposit successful.");
         } else {
             System.out.println("Withdraw failed.");
         }

@@ -1,4 +1,4 @@
-package com.revature.banking;
+package com.revature.banking.models;
 
 
 import java.io.Serializable;

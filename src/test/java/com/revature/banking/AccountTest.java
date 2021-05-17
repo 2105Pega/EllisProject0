@@ -1,5 +1,6 @@
 package com.revature.banking;
 
+import com.revature.banking.models.Account;
 import org.junit.jupiter.api.*;
 
 public class AccountTest {

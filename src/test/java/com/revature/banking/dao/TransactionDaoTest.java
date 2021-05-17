@@ -1,6 +1,7 @@
-package com.revature.banking;
+package com.revature.banking.dao;
 
-import com.revature.banking.dao.TransactionDao;
+import com.revature.banking.models.Deposit;
+import com.revature.banking.models.Withdraw;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

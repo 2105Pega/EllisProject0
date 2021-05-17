@@ -1,6 +1,6 @@
-package com.revature.banking;
+package com.revature.banking.dao;
 
-import com.revature.banking.dao.AccountDao;
+import com.revature.banking.models.Account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
