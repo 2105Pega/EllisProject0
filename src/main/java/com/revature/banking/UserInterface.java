@@ -391,7 +391,7 @@ public class UserInterface {
             System.out.print("Input amount: $");
             getDouble();
             if (tm.deposit(doubleInput, account.getUuid())) {
-                System.out.println("Withdraw successful.");
+                System.out.println("Deposit successful.");
             } else {
                 System.out.println("Deposit failed.");
             }
