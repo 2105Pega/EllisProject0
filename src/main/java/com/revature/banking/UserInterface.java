@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class UserInterface {
     enum AccountType {CLIENT, EMPLOYEE};
     Persistence p;
@@ -16,6 +19,7 @@ public class UserInterface {
     UserManager um;
     AccountManager am;
     TransactionManager tm;
+    static Logger logger = LogManager.getLogger(UserInterface.class);
 
     public UserInterface(Persistence p, Input i) {
         this.p = p;
@@ -65,8 +69,10 @@ public class UserInterface {
         if (um.verifyPassword(username, password)) {
             User user = um.getUser(username);
             System.out.println("Successful login.");
+            logger.info("successful login by " + username);
             session(user);
         } else {
+            logger.info("failed login by " + username);
             System.out.println("Invalid password.");
         }
     }
