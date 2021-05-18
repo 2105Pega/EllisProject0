@@ -1,5 +1,12 @@
 # Project 0 Banking App
 
+
+- logs are stored at logs/bankingapp.log
+- application data is stored in src/main/resources/bankdata.txt
+- the data file checked into the repo has these accounts:
+  - alice : password is maven, account type is client
+  - bob : password is java, account type is client
+  - charlie : password is chocolate, account type is employee
 ## Class Hierarchy
 
 ### Models
