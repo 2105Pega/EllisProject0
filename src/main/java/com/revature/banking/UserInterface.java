@@ -50,7 +50,6 @@ public class UserInterface {
                     break select;
             }
         }
-        run();
     }
 
     private void login() {
@@ -461,8 +460,8 @@ public class UserInterface {
                     accountStatus = "";
             }
             if (!accountStatus.equals("canceled")) {
-                System.out.println(account.getName() + " status is " + accountStatus + " balance is " + Format.f(account.getBalance()));
-                System.out.print("Account holders are ");
+                System.out.print(account.getName() + " status is " + accountStatus + " balance is " + Format.f(account.getBalance()));
+                System.out.print(" account holders are ");
                 for (String accountHolder : account.getAccountHolders()) {
                     System.out.print(accountHolder + " ");
                 }
