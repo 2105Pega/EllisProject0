@@ -58,7 +58,7 @@ public class TransactionManager {
         }
     }
 
-    public Boolean transfer(double amount, UUID from, UUID to) {
+    public Boolean transfer(double amount, UUID from, UUID to, String username) {
         Account source = p.getAccount(from);
         Account destination = p.getAccount(to);
 
@@ -83,7 +83,7 @@ public class TransactionManager {
         } else {
             source.setBalance(source.getBalance() - amount);
             destination.setBalance(destination.getBalance() + amount);
-            p.addTransaction(new Transfer(amount, from, to));
+            p.addTransaction(new Transfer(amount, from, to, username));
             logger.trace(String.format("successful transfer of " + Format.f(amount) + " from "
                     + from.toString() + " to " + to.toString()));
             return true;

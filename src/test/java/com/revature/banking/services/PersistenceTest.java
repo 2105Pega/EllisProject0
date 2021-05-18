@@ -93,7 +93,7 @@ class PersistenceTest {
 
     @Test
     void addTransaction() {
-        Transaction transaction3 = new Transfer(500, account.getUuid(), account2.getUuid());
+        Transaction transaction3 = new Transfer(500, account.getUuid(), account2.getUuid(), "alice");
         p.addTransaction(transaction3);
         Assertions.assertEquals(p.getTransaction(transaction3.getId()), transaction3);
     }

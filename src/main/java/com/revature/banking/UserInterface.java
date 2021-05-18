@@ -191,7 +191,7 @@ public class UserInterface {
             System.out.print("Input amount: $");
             getDouble();
             Account targetAccount = p.getAccount(targetAccountUsername, targetAccountName);
-            if (tm.transfer(doubleInput, account.getUuid(), targetAccount.getUuid())) {
+            if (tm.transfer(doubleInput, account.getUuid(), targetAccount.getUuid(), employee.getUsername())) {
                 System.out.println("Transfer succeeded.");
             } else {
                 System.out.println("Transfer failed.");
@@ -410,21 +410,27 @@ public class UserInterface {
         Account account = p.getAccount(user.getUsername(), input);
         if (account == null) {
             System.out.println("Account does not exist.");
-            session(user);
         } else {
             System.out.print("Username of account holder to transfer to: ");
             getString();
             String targetAccountUsername = input;
-            System.out.print("Which account do you want to transfer to? Available accounts are: ");
-            getString();
-            String targetAccountName = input;
-            System.out.print("Input amount: $");
-            getDouble();
-            Account targetAccount = p.getAccount(targetAccountUsername, targetAccountName);
-            if (tm.transfer(doubleInput, account.getUuid(), targetAccount.getUuid())) {
-                System.out.println("Transfer succeeded.");
+            if (um.clientExists(targetAccountUsername)) {
+                System.out.print("Which account do you want to transfer to? Available accounts are: ");
+                showAccounts((Client)p.getUser(targetAccountUsername));
+                getString();
+                String targetAccountName = input;
+                System.out.print("Input amount: $");
+                getDouble();
+                Account targetAccount = p.getAccount(targetAccountUsername, targetAccountName);
+                if (targetAccount == null) {
+                    System.out.println("Account does not exist.");
+                } else if (tm.transfer(doubleInput, account.getUuid(), targetAccount.getUuid(), user.getUsername())) {
+                    System.out.println("Transfer succeeded.");
+                } else {
+                    System.out.println("Transfer failed.");
+                }
             } else {
-                System.out.println("Transfer failed.");
+                System.out.println("Client does not exist.");
             }
         }
     }
@@ -496,7 +502,7 @@ public class UserInterface {
                     if (transaction.getType().equals(Transaction.Type.TRANSFER)) {
                         Transfer transfer = (Transfer)transaction;
                         String destination = p.getAccount(((Transfer) transaction).getDestination()).getName();
-                        System.out.println(" to " + destination);
+                        System.out.println(" to " + destination + " by " + transfer.getUsername());
                     } else {
                         System.out.println("");
                     }

@@ -40,10 +40,10 @@ public class TransactionManagerTest {
 
     @Test
     void transfer() {
-        Assertions.assertEquals(tm.transfer(500, account1.getUuid(), account2.getUuid()), false);
+        Assertions.assertEquals(tm.transfer(500, account1.getUuid(), account2.getUuid(), "alice"), false);
         am.approveAccount(account1.getUuid());
         am.approveAccount(account2.getUuid());
         tm.deposit(500, account1.getUuid());
-        Assertions.assertEquals(tm.transfer(500, account1.getUuid(), account2.getUuid()), true);
+        Assertions.assertEquals(tm.transfer(500, account1.getUuid(), account2.getUuid(), "alice"), true);
     }
 }
