@@ -8,13 +8,13 @@ import java.util.Properties;
 
 public class PropertiesLoader {
     private static Logger logger = LogManager.getLogger(PropertiesLoader.class);
-    private String adminUsername;
-    private String adminPassword;
-    private String endpoint;
-    private String dbUsername;
-    private String dbPassword;
+    private static String adminUsername;
+    private static String adminPassword;
+    private static String endpoint;
+    private static String dbUsername;
+    private static String dbPassword;
 
-    public void load(String propertiesPath) {
+    public static void load(String propertiesPath) {
         try {
             Properties properties = new Properties();
             FileReader fr = new FileReader(propertiesPath);
@@ -30,23 +30,23 @@ public class PropertiesLoader {
         }
     }
 
-    public String getAdminUsername() {
+    public static String getAdminUsername() {
         return adminUsername;
     }
 
-    public String getAdminPassword() {
+    public static String getAdminPassword() {
         return adminPassword;
     }
 
-    public String getEndpoint() {
+    public static String getEndpoint() {
         return endpoint;
     }
 
-    public String getDbUsername() {
+    public static String getDbUsername() {
         return dbUsername;
     }
 
-    public String getDbPassword() {
+    public static String getDbPassword() {
         return dbPassword;
     }
 }
