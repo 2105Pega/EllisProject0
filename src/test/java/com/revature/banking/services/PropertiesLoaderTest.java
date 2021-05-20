@@ -29,4 +29,14 @@ class PropertiesLoaderTest {
     void getEndpoint() {
         Assertions.assertEquals("localhost", p.getEndpoint());
     }
+
+    @Test
+    void getDbUsername() {
+        Assertions.assertEquals("beaver", p.getDbUsername());
+    }
+
+    @Test
+    void getDbPassword() {
+        Assertions.assertEquals("dbpass", p.getDbPassword());
+    }
 }

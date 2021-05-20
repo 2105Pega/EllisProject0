@@ -11,6 +11,8 @@ public class PropertiesLoader {
     private String adminUsername;
     private String adminPassword;
     private String endpoint;
+    private String dbUsername;
+    private String dbPassword;
 
     public void load(String propertiesPath) {
         try {
@@ -20,6 +22,8 @@ public class PropertiesLoader {
             adminUsername = properties.getProperty("adminUsername");
             adminPassword = properties.getProperty("adminPassword");
             endpoint = properties.getProperty("endpoint");
+            dbUsername = properties.getProperty("dbUsername");
+            dbPassword = properties.getProperty("dbPassword");
             fr.close();
         } catch (Exception e) {
             logger.error("failed to load properties file");
@@ -36,5 +40,13 @@ public class PropertiesLoader {
 
     public String getEndpoint() {
         return endpoint;
+    }
+
+    public String getDbUsername() {
+        return dbUsername;
+    }
+
+    public String getDbPassword() {
+        return dbPassword;
     }
 }
