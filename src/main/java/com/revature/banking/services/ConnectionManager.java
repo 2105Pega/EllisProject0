@@ -10,15 +10,15 @@ import java.sql.SQLException;
 public class ConnectionManager {
     static Logger logger = LogManager.getLogger(ConnectionManager.class);
 
-    public static Connection getConnection(PropertiesLoader p) {
+    public static Connection getConnection() {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
            logger.error("database driver class not found");
         }
-        String url = "jdbc:postgresql://" + p.getEndpoint();
-        String username = p.getDbUsername();
-        String password = p.getDbPassword();
+        String url = "jdbc:postgresql://" + PropertiesLoader.getEndpoint();
+        String username = PropertiesLoader.getDbUsername();
+        String password = PropertiesLoader.getDbPassword();
         try {
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
