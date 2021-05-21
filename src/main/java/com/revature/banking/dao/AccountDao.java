@@ -1,6 +1,7 @@
 package com.revature.banking.dao;
 
 import com.revature.banking.models.Account;
+import com.revature.banking.models.Transaction;
 import com.revature.banking.services.ConnectionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,14 +14,37 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class AccountDao implements Dao<Account, Integer>, Serializable {
-    private ArrayList<Account> accounts;
     static Logger logger = LogManager.getLogger(AccountDao.class);
+
+    /*
+    --  Account Table Fields --
+
+    account_id serial primary key,
+    balance double precision,
+    account_status varchar(10),
+    account_name varchar(40)
+
+     */
 
     @Override
     public ArrayList<Account> getAll() {
-        return accounts;
+        ArrayList<Account> accounts = new ArrayList<>();
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "select * from transactions";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                accounts.add(new Account(result.getInt("account_id"),
+                        result.getDouble("balance"),
+                        result.getString("account_status"),
+                        result.getString("account_name")));
+            }
+            return accounts;
+        } catch (SQLException e) {
+            logger.error("error in database access when retrieving transactions");
+            return null;
+        }
     }
-
     @Override
     public Account get(Integer id) {
         try (Connection conn = ConnectionManager.getConnection()) {
