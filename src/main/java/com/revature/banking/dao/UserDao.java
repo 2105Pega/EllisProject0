@@ -59,26 +59,29 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
 
     public Client get(String username) {
         try (Connection conn = ConnectionManager.getConnection()) {
-            String sql = "select * from accounts where username = ?";
+            String sql = "select * from clients where username = ?";
 
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setString(1, username);
 
             ResultSet result = statement.executeQuery();
-            result.next();
-
-            return new Client(result.getString("username"),
-                    result.getString("passwordhash"),
-                    result.getInt("client_id"));
+            if (result.next()) {
+                return new Client(result.getString("username"),
+                        result.getString("passwordhash"),
+                        result.getInt("client_id"));
+            } else {
+                return null;
+            }
         } catch (SQLException e) {
-            logger.error("error in database access when retrieving account by username");
+            logger.error("error in database access when retrieving client by username");
+            e.printStackTrace();
             return null;
         }
     }
 
     public void add(Client user) {
         try (Connection conn = ConnectionManager.getConnection()) {
-            String sql = "insert into clients(username, passwordhash, account_name) values(?, ?)";
+            String sql = "insert into clients(username, passwordhash) values(?, ?)";
 
             PreparedStatement statement = conn.prepareStatement(sql);
 
@@ -88,6 +91,7 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
             statement.execute();
         } catch (SQLException e) {
             logger.error("error in database access when adding account");
+            e.printStackTrace();
         }
     }
 
