@@ -23,10 +23,6 @@ public class Client extends User implements Serializable {
         return id;
     }
 
-    public void addAccountID(Integer id) {
-        //TODO add account/client relationship to db
-    }
-
     public List<Integer> getAccountIDs() {
         return new ArrayList<Integer>();
     }
