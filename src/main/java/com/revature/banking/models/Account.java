@@ -1,9 +1,7 @@
 package com.revature.banking.models;
 
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class Account implements Serializable {
     public enum Status {
@@ -31,10 +29,10 @@ public class Account implements Serializable {
             Integer id,
             double balance,
             String status,
-            String accountname) {
+            String accountName) {
         this.id = id;
         this.balance = balance;
-        this.name = accountname;
+        this.name = accountName;
         this.status = Status.valueOf(status);
     }
 
