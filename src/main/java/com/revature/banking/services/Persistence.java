@@ -64,6 +64,10 @@ public class Persistence {
         accounts.add(account);
     }
 
+    public void addAccountToUser(Integer accountId, Integer clientId) {
+        users.addAccountToUser(accountId, clientId);
+    }
+
     //transaction management
     public List<Transaction> getTransactions() {
         return transactions.getAll();

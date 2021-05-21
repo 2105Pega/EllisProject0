@@ -92,7 +92,32 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
     }
 
     @Override
-    public void remove(Client itemToRemove) {
+    public void remove(Client client) {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "delete from clients where client_id = ?";
 
+            PreparedStatement statement = conn.prepareStatement(sql);
+
+            statement.setDouble(1, client.getId());
+
+            statement.execute();
+        } catch (SQLException e) {
+            logger.error("error in database access when removing account");
+        }
+    }
+
+    public void addAccountToUser(Integer accountId, Integer clientId) {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "insert into clients_account values(?, ?)";
+
+            PreparedStatement statement = conn.prepareStatement(sql);
+
+            statement.setInt(1, clientId);
+            statement.setInt(2, accountId);
+
+            statement.execute();
+        } catch (SQLException e) {
+            logger.error("error in database access when adding account-client relationship");
+        }
     }
 }

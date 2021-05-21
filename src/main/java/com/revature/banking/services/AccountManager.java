@@ -24,7 +24,7 @@ public class AccountManager {
         if (client == null) {
             return null;
         }
-        client.addAccountID(account.getId());
+        p.addAccountToUser(account.getId(), client.getId());
         logger.debug("Created new account for " + username + " named " +
                 accountName + " with UUID " + account.getId().toString());
         return account;
@@ -36,8 +36,8 @@ public class AccountManager {
         Boolean alreadyExists = currentAccountHolders.contains(username);
         if (!alreadyExists) {
             account.addAccountHolder(username);
-            Client c = (Client)p.getUser(username);
-            c.addAccountID(accountId);
+            Client c = p.getUser(username);
+            p.addAccountToUser(accountId, p.getUser(username).getId());
         }
     }
 
