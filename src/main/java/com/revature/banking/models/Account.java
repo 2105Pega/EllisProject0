@@ -14,17 +14,28 @@ public class Account implements Serializable {
 
     private double balance;
     private ArrayList<String> accountHolders;
-    private final UUID uuid;
     private Status status;
     private final String name;
+    private final Integer id;
 
     public Account(String username, String accountName) {
         balance = 0;
         accountHolders = new ArrayList<String>();
         accountHolders.add(username);
-        uuid = UUID.randomUUID();
+        id = 0;
         status = Status.PENDING;
         this.name = accountName;
+    }
+
+    public Account(
+            Integer id,
+            double balance,
+            String status,
+            String accountname) {
+        this.id = id;
+        this.balance = balance;
+        this.name = accountname;
+        this.status = Status.valueOf(status);
     }
 
     public double getBalance() {
@@ -47,8 +58,8 @@ public class Account implements Serializable {
         return name;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public Integer getId() {
+        return id;
     }
 
     public Status getStatus() {
