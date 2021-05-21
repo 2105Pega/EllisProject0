@@ -77,17 +77,6 @@ public class UserInterface {
     }
 
     private void create() {
-        System.out.println("Create client(C) or employee(E) account?");
-        getString();
-        AccountType accountType;
-        if (input.equals("C")) {
-            accountType = AccountType.CLIENT;
-        } else if (input.equals("E")) {
-            accountType = AccountType.EMPLOYEE;
-        } else {
-            System.out.println("Invalid input.");
-            return;
-        }
         System.out.print("Input username: ");
         getString();
         String username = input;
@@ -98,48 +87,36 @@ public class UserInterface {
         System.out.print("Input password: ");
         getString();
         String password = input;
-
-        switch (accountType) {
-            case CLIENT:
-                um.createClient(username, password);
-                break;
-            case EMPLOYEE:
-                um.createEmployee(username, password);
-                break;
-        }
+        um.createClient(username, password);
     }
 
     private void session(User user) {
-        if (user.getClass().getName().equals("com.revature.banking.models.Client")) {
             clientSession((Client) user);
-        } else {
-            employeeSession((Employee) user);
-        }
     }
 
-    private void employeeSession(Employee employee) {
+    private void employeeSession() {
         while (!input.equals("E")) {
             System.out.println("Do you want to approve an account(A), cancel an account(C), withdraw(W), deposit(D), transfer (T), view info(V), or exit(E)?");
             getString();
             select:
             switch (input) {
                 case "A":
-                    approveAccount(employee);
+                    approveAccount();
                     break;
                 case "C":
-                    cancelAccount(employee);
+                    cancelAccount();
                     break;
                 case "W":
-                    employeeWithdraw(employee);
+                    employeeWithdraw();
                     break;
                 case "D":
-                    employeeDeposit(employee);
+                    employeeDeposit();
                     break;
                 case "T":
-                    employeeTransfer(employee);
+                    employeeTransfer();
                     break;
                 case "V":
-                    viewInfo(employee);
+                    viewInfo();
                     break;
                 case "E":
                     break;
@@ -150,7 +127,7 @@ public class UserInterface {
 
     }
 
-    private void viewInfo(Employee employee) {
+    private void viewInfo() {
         viewClients();
         System.out.println("\nWhich user do you want to view info for?");
         getString();
@@ -168,7 +145,7 @@ public class UserInterface {
         }
     }
 
-    private void employeeTransfer(Employee employee) {
+    private void employeeTransfer() {
         viewClients();
         System.out.print("Username of account holder to transfer from: ");
         getString();
@@ -191,7 +168,7 @@ public class UserInterface {
             System.out.print("Input amount: $");
             getDouble();
             Account targetAccount = p.getAccount(targetAccountUsername, targetAccountName);
-            if (tm.transfer(doubleInput, account.getUuid(), targetAccount.getUuid(), employee.getUsername())) {
+            if (tm.transfer(doubleInput, account.getId(), targetAccount.getId(), "admin")) {
                 System.out.println("Transfer succeeded.");
             } else {
                 System.out.println("Transfer failed.");
@@ -199,7 +176,7 @@ public class UserInterface {
         }
     }
 
-    private void employeeDeposit(Employee employee) {
+    private void employeeDeposit() {
         viewClients();
         System.out.print("Username of account holder: ");
         getString();
@@ -216,15 +193,15 @@ public class UserInterface {
         }
         System.out.print("Input amount: $");
         getDouble();
-        UUID uuid = account.getUuid();
-        if (tm.deposit(doubleInput, uuid)) {
+        Integer id = account.getId();
+        if (tm.deposit(doubleInput, id)) {
             System.out.println("Deposit successful.");
         } else {
             System.out.println("Withdraw failed.");
         }
     }
 
-    private void employeeWithdraw(Employee employee) {
+    private void employeeWithdraw() {
         viewClients();
         System.out.print("Username of account holder: ");
         getString();
@@ -241,15 +218,15 @@ public class UserInterface {
         }
         System.out.print("Input amount: $");
         getDouble();
-        UUID uuid = account.getUuid();
-        if (tm.withdraw(doubleInput, uuid)) {
+        Integer id = account.getId();
+        if (tm.withdraw(doubleInput, id)) {
             System.out.println("Withdraw successful.");
         } else {
             System.out.println("Withdraw failed.");
         }
     }
 
-    private void approveAccount(Employee employee) {
+    private void approveAccount() {
         viewClients();
         System.out.print("Username of account holder: ");
         getString();
@@ -264,11 +241,10 @@ public class UserInterface {
             System.out.println("Account does not exist.");
             return;
         }
-        UUID uuid = account.getUuid();
-        am.approveAccount(uuid);
+        am.approveAccount(account.getId());
     }
 
-    private void cancelAccount(Employee employee) {
+    private void cancelAccount() {
         viewClients();
         System.out.print("Username of account holder: ");
         getString();
@@ -283,8 +259,8 @@ public class UserInterface {
             System.out.println("Account does not exist.");
             return;
         }
-        UUID uuid = account.getUuid();
-        am.cancelAccount(uuid);
+        Integer id = account.getId();
+        am.cancelAccount(id);
     }
 
     private void clientSession(Client client) {
@@ -360,7 +336,7 @@ public class UserInterface {
                 System.out.println("Joint holder already has an account with that name, you cannot create accounts with duplicate names.");
                 return;
             }
-            am.addUser(jointUsername, newAccount.getUuid());
+            am.addUser(jointUsername, newAccount.getId());
         }
         System.out.println("Account created, it must be approved by an employee before use.");
     }
@@ -376,7 +352,7 @@ public class UserInterface {
         } else {
             System.out.print("Input amount: $");
             getDouble();
-            if (tm.withdraw(doubleInput, account.getUuid())) {
+            if (tm.withdraw(doubleInput, account.getId())) {
                 System.out.println("Withdraw successful.");
             } else {
                 System.out.println("Withdraw failed.");
@@ -395,7 +371,7 @@ public class UserInterface {
         } else {
             System.out.print("Input amount: $");
             getDouble();
-            if (tm.deposit(doubleInput, account.getUuid())) {
+            if (tm.deposit(doubleInput, account.getId())) {
                 System.out.println("Deposit successful.");
             } else {
                 System.out.println("Deposit failed.");
@@ -424,7 +400,7 @@ public class UserInterface {
                 Account targetAccount = p.getAccount(targetAccountUsername, targetAccountName);
                 if (targetAccount == null) {
                     System.out.println("Account does not exist.");
-                } else if (tm.transfer(doubleInput, account.getUuid(), targetAccount.getUuid(), user.getUsername())) {
+                } else if (tm.transfer(doubleInput, account.getId(), targetAccount.getId(), user.getUsername())) {
                     System.out.println("Transfer succeeded.");
                 } else {
                     System.out.println("Transfer failed.");
@@ -447,9 +423,9 @@ public class UserInterface {
 
     private void showAccounts(Client client) {
         if (client == null) return;
-
-        UUID accounts[] = client.getAccountUUIDs();
-        for (UUID accountId : accounts) {
+        ArrayList<Integer> accounts = new ArrayList<>();
+        for (Account account : p.getAccounts(client.getId())) accounts.add(account.getId());
+        for (Integer accountId : accounts) {
             Account account = p.getAccount(accountId);
             String accountStatus;
             switch (account.getStatus()) {
@@ -478,11 +454,12 @@ public class UserInterface {
 
     private void showTransactions(Client client) {
         if (client == null) return;
-        UUID accounts[] = client.getAccountUUIDs();
+        ArrayList<Integer> accounts = new ArrayList<>();
+        for (Account account : p.getAccounts(client.getId())) accounts.add(account.getId());
         List<Transaction> transactions = p.getTransactions();
         for (Transaction transaction : transactions) {
-            for (UUID account : accounts) {
-                if (transaction.getAccount().equals(account)) {
+            for (Integer account : accounts) {
+                if (transaction.getAccount() == account) {
                     double amount = transaction.getAmount();
                     String accountName = p.getAccount(account).getName();
                     switch (transaction.getType()) {
@@ -500,9 +477,9 @@ public class UserInterface {
                     }
                     System.out.print(accountName + " of " + Format.f(amount));
                     if (transaction.getType().equals(Transaction.Type.TRANSFER)) {
-                        Transfer transfer = (Transfer)transaction;
-                        String destination = p.getAccount(((Transfer) transaction).getDestination()).getName();
-                        System.out.println(" to " + destination + " by " + transfer.getUsername());
+                        Transaction transfer = transaction;
+                        String destination = p.getAccount(transaction.getDestination()).getName();
+                        System.out.println(" to " + destination + " by " + p.getUser(transfer.getInitiator()).getUsername());
                     } else {
                         System.out.println("");
                     }

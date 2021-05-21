@@ -2,7 +2,6 @@ package com.revature.banking.services;
 
 import com.revature.banking.models.Account;
 import com.revature.banking.models.Client;
-import com.revature.banking.models.Employee;
 import com.revature.banking.models.User;
 import org.apache.logging.log4j.Logger;
 
@@ -27,13 +26,6 @@ public class UserManager {
         return client;
     }
 
-    public Employee createEmployee(String username, String password) {
-        Employee employee = new Employee(username, hashPassword(password));
-        p.addUser(employee);
-        LogManager.getLogger("Created new employee + " + employee.getUsername());
-        return employee;
-    }
-
     public User getUser(String username) {
         return p.getUser(username);
     }
@@ -44,27 +36,11 @@ public class UserManager {
     }
 
     public Boolean userExists(String username) {
-        ArrayList<User> users = p.getUsers();
-
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                return true;
-            }
-        }
-        return false;
+        return (p.getUser(username) != null);
     }
 
     public Boolean clientExists(String username) {
-        ArrayList<User> users = p.getUsers();
-
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                if (user.getClass().getName().equals("com.revature.banking.models.Client")) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return (p.getUser(username) != null);
     }
 
     private String hashPassword(String password) {

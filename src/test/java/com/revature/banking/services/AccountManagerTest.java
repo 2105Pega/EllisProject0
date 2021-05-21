@@ -31,7 +31,7 @@ class AccountManagerTest {
     void addUser() {
         am.createAccount("alice", "savings");
         Account account = p.getAccount("alice", "savings");
-        am.addUser("bob", account.getUuid());
+        am.addUser("bob", account.getId());
         Assertions.assertNotEquals(p.getAccount("bob", "savings"), null);
     }
 
@@ -39,7 +39,7 @@ class AccountManagerTest {
     void approveAccount() {
         am.createAccount("alice", "savings");
         Account account = p.getAccount("alice", "savings");
-        am.approveAccount(account.getUuid());
+        am.approveAccount(account.getId());
         Assertions.assertEquals(account.getStatus(), Account.Status.APPROVED);
     }
 
@@ -47,7 +47,7 @@ class AccountManagerTest {
     void cancelAccount() {
         am.createAccount("alice", "savings");
         Account account = p.getAccount("alice", "savings");
-        am.cancelAccount(account.getUuid());
+        am.cancelAccount(account.getId());
         Assertions.assertEquals(account.getStatus(), Account.Status.CANCELLED);
     }
 }

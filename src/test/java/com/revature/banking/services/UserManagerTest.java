@@ -54,7 +54,6 @@ class UserManagerTest {
     @Test
     void clientExists() {
         um.createClient("bob", "password");
-        um.createEmployee("alice", "password");
         Assertions.assertEquals(um.clientExists("bob"), true);
         Assertions.assertEquals(um.clientExists("alice"), false);
     }

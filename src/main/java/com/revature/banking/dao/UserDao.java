@@ -1,34 +1,98 @@
 package com.revature.banking.dao;
 
+import com.revature.banking.models.Account;
+import com.revature.banking.models.Client;
+import com.revature.banking.models.Transaction;
 import com.revature.banking.models.User;
+import com.revature.banking.services.ConnectionManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class UserDao implements Dao<User, String>, Serializable {
-    private ArrayList<User> users;
-
-    public UserDao() {
-        users = new ArrayList<User>();
-    }
+public class UserDao implements Dao<Client, Integer>, Serializable {
+    static Logger logger = LogManager.getLogger(TransactionDao.class);
 
     @Override
-    public ArrayList<User> getAll() {
-        return users;
-    }
-
-    @Override
-    public User get(String id) {
-        for (User user: users) {
-            if (user.getUsername().equals(id)) {
-                return user;
+    public ArrayList<Client> getAll() {
+        ArrayList<Client> users = new ArrayList<>();
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "select * from transactions";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                users.add(new Client(result.getString("username"),
+                        result.getString("passwordhash"),
+                        result.getInt("client_id")));
             }
+            return users;
+        } catch (SQLException e) {
+            logger.error("error in database access when retrieving transactions");
+            return null;
         }
-        return null;
     }
 
     @Override
-    public void add(User user) {
-        users.add(user);
+    public Client get(Integer id) {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "select * from accounts where account_id = ?";
+
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, id);
+
+            ResultSet result = statement.executeQuery();
+            result.next();
+
+            return new Client(result.getString("username"),
+                    result.getString("passwordhash"),
+                    result.getInt("client_id"));
+        } catch (SQLException e) {
+            logger.error("error in database access when retrieving account by id");
+            return null;
+        }
+    }
+
+    public Client get(String username) {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "select * from accounts where username = ?";
+
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, username);
+
+            ResultSet result = statement.executeQuery();
+            result.next();
+
+            return new Client(result.getString("username"),
+                    result.getString("passwordhash"),
+                    result.getInt("client_id"));
+        } catch (SQLException e) {
+            logger.error("error in database access when retrieving account by username");
+            return null;
+        }
+    }
+
+    public void add(Client user) {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "insert into clients(username, passwordhash, account_name) values(?, ?)";
+
+            PreparedStatement statement = conn.prepareStatement(sql);
+
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPasswordHash());
+
+            statement.execute();
+        } catch (SQLException e) {
+            logger.error("error in database access when adding account");
+        }
+    }
+
+    @Override
+    public void remove(Client itemToRemove) {
+
     }
 }

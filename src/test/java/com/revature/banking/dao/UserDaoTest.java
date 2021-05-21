@@ -23,14 +23,14 @@ class UserDaoTest {
 
     @Test
     void get() {
-        User alice = new Client("alice", "***");
+        Client alice = new Client("alice", "***");
         userDao.add(alice);
         assertEquals(userDao.get(alice.getUsername()), alice);
     }
 
     @Test
     void add() {
-        User alice = new Client("alice", "***");
+        Client alice = new Client("alice", "***");
         userDao.add(alice);
         assertEquals(userDao.get(alice.getUsername()), alice);
     }

@@ -24,13 +24,13 @@ class AccountDaoTest {
     void get() {
         Account account = new Account("alice", "savings");
         accountDao.add(account);
-        assertEquals(accountDao.get("alice", "savings"), account);
+        assertEquals(accountDao.get(1, "savings"), account);
     }
 
     @Test
     void add() {
         Account account = new Account("alice", "savings");
         accountDao.add(account);
-        assertEquals(accountDao.get("alice", "savings"), account);
+        assertEquals(accountDao.get(1, "savings"), account);
     }
 }

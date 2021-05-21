@@ -8,6 +8,11 @@ public class UserTest {
         ConcreteUser(String username, String passwordHash) {
             super(username, passwordHash);
         }
+
+        @Override
+        public Integer getId() {
+            return null;
+        }
     }
 
     @Test

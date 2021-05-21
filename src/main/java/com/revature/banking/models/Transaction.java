@@ -7,7 +7,9 @@ public class Transaction implements Serializable {
     private final Integer account;
     private final Integer destination;
     private final Integer id;
+    private final Integer initiator;
     private Type type;
+
     public enum Type {
         WITHDRAW,
         DEPOSIT,
@@ -15,25 +17,28 @@ public class Transaction implements Serializable {
     }
 
     //constructors for transfer transaction, includes destination field
-    public Transaction(double amount, Integer account, Integer destination, Type type) {
+    public Transaction(double amount, Integer account, Integer destination, Integer initiator, Type type) {
         this.amount = amount;
         this.account = account;
         this.destination = destination;
+        this.initiator = initiator;
         this.type = type;
-        this.id = null;
+        this.id = 0;
     }
-    public Transaction(double amount, Integer account, Integer destination, String type) {
+    public Transaction(double amount, Integer account, Integer destination, Integer initiator, String type) {
         this.amount = amount;
         this.account = account;
         this.destination = destination;
+        this.initiator = initiator;
         this.type = Type.valueOf(type);
-        this.id = null;
+        this.id = 0;
     }
 
-    public Transaction(double amount, Integer account, Integer destination, String type, Integer id) {
+    public Transaction(double amount, Integer account, Integer destination, Integer initiator, String type, Integer id) {
         this.amount = amount;
         this.account = account;
         this.destination = destination;
+        this.initiator = initiator;
         this.type = Type.valueOf(type);
         this.id = id;
     }
@@ -44,14 +49,16 @@ public class Transaction implements Serializable {
         this.account = account;
         this.destination = 0;
         this.type = type;
-        this.id = null;
+        this.id = 0;
+        this.initiator = 0;
     }
     public Transaction(double amount, Integer account, String type) {
         this.amount = amount;
         this.account = account;
         this.destination = 0;
         this.type = Type.valueOf(type);
-        this.id = null;
+        this.id = 0;
+        this.initiator = 0;
     }
 
     public Transaction(double amount, Integer account, String type, Integer id) {
@@ -60,6 +67,7 @@ public class Transaction implements Serializable {
         this.destination = 0;
         this.type = Type.valueOf(type);
         this.id = id;
+        this.initiator = 0;
     }
 
 
@@ -82,4 +90,7 @@ public class Transaction implements Serializable {
         return type;
     }
 
+    public Integer getInitiator() {
+        return initiator;
+    }
 }

@@ -26,4 +26,6 @@ public abstract class User implements Serializable {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
+
+    public abstract Integer getId();
 }

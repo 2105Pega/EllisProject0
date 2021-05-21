@@ -25,25 +25,25 @@ public class TransactionManagerTest {
     }
     @Test
     void withdraw() {
-        Assertions.assertEquals(tm.withdraw(500, account1.getUuid()), false);
-        am.approveAccount(account1.getUuid());
-        tm.deposit(500, account1.getUuid());
-        Assertions.assertEquals(tm.withdraw(500, account1.getUuid()), true);
+        Assertions.assertEquals(tm.withdraw(500, account1.getId()), false);
+        am.approveAccount(account1.getId());
+        tm.deposit(500, account1.getId());
+        Assertions.assertEquals(tm.withdraw(500, account1.getId()), true);
     }
 
     @Test
     void deposit() {
-        Assertions.assertEquals(tm.deposit(500, account1.getUuid()), false);
-        am.approveAccount(account1.getUuid());
-        Assertions.assertEquals(tm.deposit(500, account1.getUuid()), true);
+        Assertions.assertEquals(tm.deposit(500, account1.getId()), false);
+        am.approveAccount(account1.getId());
+        Assertions.assertEquals(tm.deposit(500, account1.getId()), true);
     }
 
     @Test
     void transfer() {
-        Assertions.assertEquals(tm.transfer(500, account1.getUuid(), account2.getUuid(), "alice"), false);
-        am.approveAccount(account1.getUuid());
-        am.approveAccount(account2.getUuid());
-        tm.deposit(500, account1.getUuid());
-        Assertions.assertEquals(tm.transfer(500, account1.getUuid(), account2.getUuid(), "alice"), true);
+        Assertions.assertEquals(tm.transfer(500, account1.getId(), account2.getId(), "alice"), false);
+        am.approveAccount(account1.getId());
+        am.approveAccount(account2.getId());
+        tm.deposit(500, account1.getId());
+        Assertions.assertEquals(tm.transfer(500, account1.getId(), account2.getId(), "alice"), true);
     }
 }

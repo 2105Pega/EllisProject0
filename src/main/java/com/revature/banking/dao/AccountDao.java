@@ -30,7 +30,28 @@ public class AccountDao implements Dao<Account, Integer>, Serializable {
     public ArrayList<Account> getAll() {
         ArrayList<Account> accounts = new ArrayList<>();
         try (Connection conn = ConnectionManager.getConnection()) {
-            String sql = "select * from transactions";
+            String sql = "select * from accounts";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                accounts.add(new Account(result.getInt("account_id"),
+                        result.getDouble("balance"),
+                        result.getString("account_status"),
+                        result.getString("account_name")));
+            }
+            return accounts;
+        } catch (SQLException e) {
+            logger.error("error in database access when retrieving transactions");
+            return null;
+        }
+    }
+
+    public ArrayList<Account> getAll(Integer clientId) {
+        ArrayList<Account> accounts = new ArrayList<>();
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "select * from accounts a" +
+                    "inner join clients_accounts" +
+                    "where accounts.account_id = clients_accounts.account_id";
             PreparedStatement statement = conn.prepareStatement(sql);
             ResultSet result = statement.executeQuery();
             while(result.next()) {
@@ -82,8 +103,6 @@ public class AccountDao implements Dao<Account, Integer>, Serializable {
             e.printStackTrace();
         }
     }
-
-    @Override
     public void remove(Account account) {
         try (Connection conn = ConnectionManager.getConnection()) {
             String sql = "delete from accounts where " +
@@ -102,6 +121,7 @@ public class AccountDao implements Dao<Account, Integer>, Serializable {
             e.printStackTrace();
         }
     }
+
     public Account get(Integer clientId, String accountName) {
         try (Connection conn = ConnectionManager.getConnection()) {
             String sql = "select get_account(?, ?)";
@@ -121,4 +141,5 @@ public class AccountDao implements Dao<Account, Integer>, Serializable {
             return null;
         }
     }
+
 }

@@ -1,7 +1,6 @@
 package com.revature.banking.dao;
 
-import com.revature.banking.models.Deposit;
-import com.revature.banking.models.Withdraw;
+import com.revature.banking.models.Transaction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,17 +9,17 @@ import java.util.UUID;
 
 class TransactionDaoTest {
     TransactionDao transactionDao;
-    Withdraw transaction;
+    Transaction transaction;
     @BeforeEach
     void setUp() {
         transactionDao = new TransactionDao();
-        transaction = new Withdraw(500, UUID.randomUUID());
+        transaction = new Transaction(500, 1, Transaction.Type.DEPOSIT);
         transactionDao.add(transaction);
     }
 
     @Test
     void getAll() {
-        Deposit transaction2 = new Deposit(500, UUID.randomUUID());
+        Transaction transaction2 = new Transaction(500, 1, Transaction.Type.DEPOSIT);
         transactionDao.add(transaction2);
         Assertions.assertEquals(transactionDao.getAll().size(), 2);
     }
@@ -32,7 +31,7 @@ class TransactionDaoTest {
 
     @Test
     void add() {
-        Deposit transaction2 = new Deposit(500, UUID.randomUUID());
+        Transaction transaction2 = new Transaction(500, 1, Transaction.Type.DEPOSIT);
         transactionDao.add(transaction2);
         Assertions.assertEquals(transaction2, transactionDao.get(transaction2.getId()));
     }

@@ -24,29 +24,29 @@ public class AccountManager {
         if (client == null) {
             return null;
         }
-        client.addAccountUUID(account.getUuid());
+        client.addAccountID(account.getId());
         logger.debug("Created new account for " + username + " named " +
-                accountName + " with UUID " + account.getUuid().toString());
+                accountName + " with UUID " + account.getId().toString());
         return account;
     }
 
-    public void addUser(String username, UUID accountUuid) {
-        Account account = p.getAccount(accountUuid);
+    public void addUser(String username, Integer accountId) {
+        Account account = p.getAccount(accountId);
         ArrayList<String> currentAccountHolders = account.getAccountHolders();
         Boolean alreadyExists = currentAccountHolders.contains(username);
         if (!alreadyExists) {
             account.addAccountHolder(username);
             Client c = (Client)p.getUser(username);
-            c.addAccountUUID(accountUuid);
+            c.addAccountID(accountId);
         }
     }
 
-    public void approveAccount(UUID uuid) {
-        p.getAccount(uuid).setStatus(Account.Status.APPROVED);
+    public void approveAccount(Integer id) {
+        p.getAccount(id).setStatus(Account.Status.APPROVED);
     }
 
-    public void cancelAccount(UUID uuid) {
-        p.getAccount(uuid).setStatus(Account.Status.CANCELLED);
+    public void cancelAccount(Integer id) {
+        p.getAccount(id).setStatus(Account.Status.CANCELLED);
     }
 
 }

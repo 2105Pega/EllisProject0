@@ -1,13 +1,8 @@
 package com.revature.banking.services;
 
-import com.revature.banking.models.Account;
-import com.revature.banking.models.Deposit;
-import com.revature.banking.models.Transfer;
-import com.revature.banking.models.Withdraw;
+import com.revature.banking.models.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.UUID;
 
 public class TransactionManager {
     Persistence p;
@@ -17,9 +12,9 @@ public class TransactionManager {
         this.p = p;
     }
 
-    public Boolean withdraw(double amount, UUID uuid) {
-        Account account = p.getAccount(uuid);
-        ;
+    public Boolean withdraw(double amount, Integer id) {
+        Account account = p.getAccount(id);
+
         if (amount < 0) {
             logger.trace("withdraw failed due to invalid amount");
             return false;
@@ -31,15 +26,15 @@ public class TransactionManager {
             return false;
         }else {
             account.setBalance(account.getBalance() - amount);
-            p.addTransaction(new Withdraw(amount, uuid));
+            p.addTransaction(new Transaction(amount, id, Transaction.Type.WITHDRAW));
             logger.trace(String.format("successful withdraw of " + Format.f(amount) +
-                    " from " + uuid.toString()));
+                    " from " + id.toString()));
             return true;
         }
     }
 
-    public Boolean deposit(double amount, UUID uuid) {
-        Account account = p.getAccount(uuid);
+    public Boolean deposit(double amount, Integer id) {
+        Account account = p.getAccount(id);
         if (account == null) {
             logger.error("deposit failed because account does not exist");
             return false;
@@ -51,14 +46,14 @@ public class TransactionManager {
             return false;
         } else {
             account.setBalance(account.getBalance() + amount);
-            p.addTransaction(new Deposit(amount, uuid));
+            p.addTransaction(new Transaction(amount, id, Transaction.Type.DEPOSIT));
             logger.trace(String.format("successful deposit of " + Format.f(amount) + " to "
-                    + uuid.toString()));
+                    + id.toString()));
             return true;
         }
     }
 
-    public Boolean transfer(double amount, UUID from, UUID to, String username) {
+    public Boolean transfer(double amount, Integer from, Integer to, String username) {
         Account source = p.getAccount(from);
         Account destination = p.getAccount(to);
 
@@ -77,13 +72,13 @@ public class TransactionManager {
         } else if (source.getBalance() < amount) {
             logger.trace("transfer failed due to insufficient funds");
             return false;
-        } else if (source.getUuid().equals(destination.getUuid())) {
+        } else if (source.getId().equals(destination.getId())) {
             logger.trace("transfer failed because source and destination are same account");
             return false;
         } else {
             source.setBalance(source.getBalance() - amount);
             destination.setBalance(destination.getBalance() + amount);
-            p.addTransaction(new Transfer(amount, from, to, username));
+            p.addTransaction(new Transaction(amount, from, to, p.getUser(username).getId(), Transaction.Type.TRANSFER));
             logger.trace(String.format("successful transfer of " + Format.f(amount) + " from "
                     + from.toString() + " to " + to.toString()));
             return true;

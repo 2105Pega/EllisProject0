@@ -2,21 +2,32 @@ package com.revature.banking.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Client extends User implements Serializable {
-    private ArrayList<UUID> accountUUIDs;
+    private Integer id;
+
+    public Client(String username, String passwordHash, int id) {
+        super(username, passwordHash);
+        this.id = id;
+    }
 
     public Client(String username, String passwordHash) {
         super(username, passwordHash);
-        accountUUIDs = new ArrayList<UUID>();
+        this.id = 0;
     }
 
-    public void addAccountUUID(UUID uuid) {
-        accountUUIDs.add(uuid);
+    @Override
+    public Integer getId() {
+        return id;
     }
 
-    public UUID[] getAccountUUIDs() {
-        return accountUUIDs.toArray(new UUID[accountUUIDs.size()]);
+    public void addAccountID(Integer id) {
+        //TODO add account/client relationship to db
+    }
+
+    public List<Integer> getAccountIDs() {
+        return new ArrayList<Integer>();
     }
 }

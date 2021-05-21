@@ -13,12 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class TransactionDao implements Dao<Transaction, Integer>, Serializable {
-    private ArrayList<Transaction> transactions;
     static Logger logger = LogManager.getLogger(TransactionDao.class);
-
-    public TransactionDao() {
-        transactions = new ArrayList<Transaction>();
-    }
 
     @Override
     public ArrayList<Transaction> getAll() {
@@ -31,6 +26,7 @@ public class TransactionDao implements Dao<Transaction, Integer>, Serializable {
                 transactions.add(new Transaction(result.getDouble("amount"),
                         result.getInt("source_id"),
                         result.getInt("destination_id"),
+                        result.getInt("initiator"),
                         result.getString("transaction_type")));
             }
             return transactions;
@@ -54,6 +50,7 @@ public class TransactionDao implements Dao<Transaction, Integer>, Serializable {
             return new Transaction(result.getDouble("amount"),
                     result.getInt("source_id"),
                     result.getInt("destination_id"),
+                    result.getInt("initiator"),
                     result.getString("transaction_type"),
                     result.getInt("transaction_id")) {
             };
@@ -65,7 +62,20 @@ public class TransactionDao implements Dao<Transaction, Integer>, Serializable {
 
     @Override
     public void add(Transaction transaction) {
-        transactions.add(transaction);
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "insert into transactions(source_id, destination_id, initiator, amount, transaction_type) values (?, ?, ?, ?, ?)";
+            PreparedStatement statement = conn.prepareStatement(sql);
+
+            statement.setInt(1, transaction.getAccount());
+            statement.setInt(2, transaction.getDestination());
+            statement.setInt(3, transaction.getAccount());
+            statement.setDouble(4, transaction.getAmount());
+            statement.setString(5, transaction.getType().toString());
+
+            statement.execute();
+        } catch (SQLException e) {
+            logger.error("error in database access when adding transaction");
+        }
     }
 
     @Override

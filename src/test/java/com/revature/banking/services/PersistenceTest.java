@@ -11,7 +11,7 @@ import java.util.ArrayList;
 class PersistenceTest {
     Persistence p;
     Client alice;
-    Employee bob;
+    Client bob;
     Account account;
     Account account2;
     Transaction transaction;
@@ -21,27 +21,22 @@ class PersistenceTest {
     void setUp() {
         p = new Persistence();
         alice = new Client("alice", "***");
-        bob = new Employee("bob", "***");
+        bob = new Client("bob", "***");
         p.addUser(alice);
         p.addUser(bob);
         account = new Account("alice", "checking");
         account2 = new Account("bob", "savings");
         p.addAccount(account);
         p.addAccount(account2);
-        transaction = new Deposit(500, account.getUuid());
-        transaction2 = new Withdraw(500, account.getUuid());
+        transaction = new Transaction(500, account.getId(), Transaction.Type.DEPOSIT);
+        transaction2 = new Transaction(500, account.getId(), Transaction.Type.WITHDRAW);
         p.addTransaction(transaction);
         p.addTransaction(transaction2);
     }
 
     @Test
-    void writeToFile() {
-        Assertions.assertDoesNotThrow( () -> { p.writeToFile("src/main/resources/testfile.txt"); } );
-    }
-
-    @Test
     void getUsers() {
-        ArrayList<User> users = p.getUsers();
+        ArrayList<Client> users = p.getUsers();
         Assertions.assertEquals(users.contains(alice), true);
         Assertions.assertEquals(users.contains(bob), true);
     }
@@ -66,7 +61,7 @@ class PersistenceTest {
 
     @Test
     void getAccountByUUID() {
-        Assertions.assertEquals(p.getAccount(account.getUuid()), account);
+        Assertions.assertEquals(p.getAccount(account.getId()), account);
     }
 
     @Test
@@ -93,7 +88,7 @@ class PersistenceTest {
 
     @Test
     void addTransaction() {
-        Transaction transaction3 = new Transfer(500, account.getUuid(), account2.getUuid(), "alice");
+        Transaction transaction3 = new Transaction(500, account.getId(), Transaction.Type.DEPOSIT);
         p.addTransaction(transaction3);
         Assertions.assertEquals(p.getTransaction(transaction3.getId()), transaction3);
     }

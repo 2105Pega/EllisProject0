@@ -2,6 +2,7 @@ package com.revature.banking.services;
 
 import com.revature.banking.dao.*;
 import com.revature.banking.models.Account;
+import com.revature.banking.models.Client;
 import com.revature.banking.models.Transaction;
 import com.revature.banking.models.User;
 
@@ -21,46 +22,19 @@ public class Persistence {
         transactions = new TransactionDao();
     }
 
-    public Persistence(String filename) {
-        try {
-            FileInputStream fis = new FileInputStream(filename);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            users = (UserDao) ois.readObject();
-            accounts = (AccountDao) ois.readObject();
-            transactions = (TransactionDao) ois.readObject();
-            ois.close();
-            fis.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void writeToFile(String filename) {
-        try {
-            FileOutputStream fos = new FileOutputStream(filename);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(users);
-            oos.writeObject(accounts);
-            oos.writeObject(transactions);
-            oos.close();
-            fos.close();
-        } catch (IOException i) {
-            i.printStackTrace();
-        }
-    }
-
     //user management
-    public ArrayList<User> getUsers() {
+    public ArrayList<Client> getUsers() {
         return users.getAll();
     }
+    public Client getUser(Integer id) {
+        return users.get(id);
+    }
 
-    public User getUser(String username) {
+    public Client getUser(String username) {
         return users.get(username);
     }
 
-    public void addUser(User user) {
+    public void addUser(Client user) {
         users.add(user);
     }
 
@@ -69,12 +43,21 @@ public class Persistence {
         return accounts.getAll();
     }
 
-    public Account getAccount(UUID uuid) {
-        return accounts.get(uuid);
+    public ArrayList<Account> getAccounts(Integer clientId) {
+        return accounts.getAll(clientId);
+    }
+
+    public Account getAccount(Integer id) {
+        return accounts.get(id);
+    }
+
+    public Account getAccount(Integer id, String accountName) {
+        return accounts.get(id, accountName);
     }
 
     public Account getAccount(String username, String accountName) {
-        return accounts.get(username, accountName);
+        Integer clientId = getUser(username).getId();
+        return accounts.get(clientId, accountName);
     }
 
     public void addAccount(Account account) {
