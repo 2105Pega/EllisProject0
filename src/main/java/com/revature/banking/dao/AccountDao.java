@@ -7,10 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class AccountDao implements Dao<Account, Integer>, Serializable {
@@ -88,19 +85,25 @@ public class AccountDao implements Dao<Account, Integer>, Serializable {
     }
 
     @Override
-    public void add(Account account) {
+    public Integer add(Account account) {
         try (Connection conn = ConnectionManager.getConnection()) {
             String sql = "insert into accounts(balance, account_status, account_name) values(?,?,?)";
 
-            PreparedStatement statement = conn.prepareStatement(sql);
+            PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             statement.setDouble(1, account.getBalance());
             statement.setString(2, account.getStatus().toString());
             statement.setString(3, account.getName());
 
-            statement.execute();
+            statement.executeUpdate();
+            ResultSet result = statement.getGeneratedKeys();
+            result.next();
+            return result.getInt(1);
+
         } catch (SQLException e) {
+            logger.error("error in database access when adding account");
             e.printStackTrace();
+            return 0;
         }
     }
     public void remove(Account account) {
@@ -118,6 +121,7 @@ public class AccountDao implements Dao<Account, Integer>, Serializable {
 
             statement.execute();
         } catch (SQLException e) {
+            logger.error("error in database access when removing account");
             e.printStackTrace();
         }
     }

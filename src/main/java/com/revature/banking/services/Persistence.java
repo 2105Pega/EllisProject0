@@ -60,8 +60,8 @@ public class Persistence {
         return accounts.get(clientId, accountName);
     }
 
-    public void addAccount(Account account) {
-        accounts.add(account);
+    public Integer addAccount(Account account) {
+        return accounts.add(account);
     }
 
     public void addAccountToUser(Integer accountId, Integer clientId) {

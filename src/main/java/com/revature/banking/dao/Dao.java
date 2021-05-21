@@ -8,7 +8,7 @@ public interface Dao<T, T2> {
 
     T get(T2 id);
 
-    void add(T newItem);
+    T2 add(T newItem);
 
     void remove(T itemToRemove);
 }

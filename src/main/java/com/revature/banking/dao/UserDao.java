@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class UserDao implements Dao<Client, Integer>, Serializable {
-    static Logger logger = LogManager.getLogger(TransactionDao.class);
+    static Logger logger = LogManager.getLogger(UserDao.class);
 
     @Override
     public ArrayList<Client> getAll() {
@@ -79,7 +79,7 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
         }
     }
 
-    public void add(Client user) {
+    public Integer add(Client user) {
         try (Connection conn = ConnectionManager.getConnection()) {
             String sql = "insert into clients(username, passwordhash) values(?, ?)";
 
@@ -93,6 +93,7 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
             logger.error("error in database access when adding account");
             e.printStackTrace();
         }
+        return 0;
     }
 
     @Override
@@ -112,7 +113,7 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
 
     public void addAccountToUser(Integer accountId, Integer clientId) {
         try (Connection conn = ConnectionManager.getConnection()) {
-            String sql = "insert into clients_account values(?, ?)";
+            String sql = "insert into clients_accounts values(?, ?)";
 
             PreparedStatement statement = conn.prepareStatement(sql);
 
@@ -122,6 +123,7 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
             statement.execute();
         } catch (SQLException e) {
             logger.error("error in database access when adding account-client relationship");
+            e.printStackTrace();
         }
     }
 }

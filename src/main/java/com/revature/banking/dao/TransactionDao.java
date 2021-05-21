@@ -61,7 +61,7 @@ public class TransactionDao implements Dao<Transaction, Integer>, Serializable {
     }
 
     @Override
-    public void add(Transaction transaction) {
+    public Integer add(Transaction transaction) {
         try (Connection conn = ConnectionManager.getConnection()) {
             String sql = "insert into transactions(source_id, destination_id, initiator, amount, transaction_type) values (?, ?, ?, ?, ?)";
             PreparedStatement statement = conn.prepareStatement(sql);
@@ -76,6 +76,7 @@ public class TransactionDao implements Dao<Transaction, Integer>, Serializable {
         } catch (SQLException e) {
             logger.error("error in database access when adding transaction");
         }
+        return 0;
     }
 
     @Override

@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class UserInterface {
-    enum AccountType {CLIENT, EMPLOYEE};
     Persistence p;
     Input i;
     String input;
@@ -56,15 +55,23 @@ public class UserInterface {
         System.out.print("Input username: ");
         getString();
         String username = input;
-        if (!um.userExists(username)) {
+        if (!um.userExists(username) && !PropertiesLoader.getAdminUsername().equals(username)) {
             System.out.println("User does not exist.");
-            run();
             return;
         }
         System.out.print("Input password: ");
         getString();
         String password = input;
 
+        if (PropertiesLoader.getAdminUsername().equals(username)) {
+            if (PropertiesLoader.getAdminPassword().equals(password)) {
+                employeeSession();
+            } else {
+                logger.info("failed login by " + username);
+                System.out.println("Invalid password.");
+                return;
+            }
+        }
         if (um.verifyPassword(username, password)) {
             User user = um.getUser(username);
             System.out.println("Successful login.");

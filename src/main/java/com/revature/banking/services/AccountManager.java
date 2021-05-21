@@ -19,15 +19,16 @@ public class AccountManager {
 
     public Account createAccount(String username, String accountName) {
         Account account = new Account(username, accountName);
-        p.addAccount(account);
-        Client client = (Client)p.getUser(username);
+        Integer accountId = p.addAccount(account);
+        Client client = p.getUser(username);
         if (client == null) {
             return null;
         }
-        p.addAccountToUser(account.getId(), client.getId());
+        Account newAccount = new Account(accountId, account.getBalance(), account.getStatus().toString(), account.getName());
+        p.addAccountToUser(newAccount.getId(), client.getId());
         logger.debug("Created new account for " + username + " named " +
-                accountName + " with UUID " + account.getId().toString());
-        return account;
+                accountName + " with ID " + account.getId().toString());
+        return newAccount;
     }
 
     public void addUser(String username, Integer accountId) {

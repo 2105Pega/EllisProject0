@@ -113,6 +113,7 @@ public class UserManager {
         ArrayList<Account> accounts = p.getAccounts();
         for (Account account : accounts) {
             ArrayList<String> accountHolders = account.getAccountHolders();
+            if  (accountHolders == null) return accountNames;
             for (String accountHolder : accountHolders) {
                 if (accountHolder.equals(username)) {
                     accountNames.add(account.getName());
