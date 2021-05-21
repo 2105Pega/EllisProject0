@@ -22,7 +22,22 @@ public class TransactionDao implements Dao<Transaction, Integer>, Serializable {
 
     @Override
     public ArrayList<Transaction> getAll() {
-        return transactions;
+        ArrayList<Transaction> transactions = new ArrayList<>();
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "select * from transactions";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                transactions.add(new Transaction(result.getDouble("amount"),
+                        result.getInt("source_id"),
+                        result.getInt("destination_id"),
+                        result.getString("transaction_type")));
+            }
+            return transactions;
+        } catch (SQLException e) {
+            logger.error("error in database access when retrieving transactions");
+            return null;
+        }
     }
 
     @Override
