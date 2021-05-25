@@ -1,5 +1,6 @@
 package com.revature.banking.services;
 
+import com.revature.banking.models.Client;
 import com.revature.banking.services.Persistence;
 import com.revature.banking.services.UserManager;
 import org.junit.jupiter.api.Assertions;
@@ -9,15 +10,21 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class UserManagerTest {
     Persistence p;
     UserManager um;
+    Client bob;
 
     @BeforeEach
     void setUp() {
-        p = new Persistence();
+        p = mock(Persistence.class);
         um = new UserManager(p);
+
+        bob = new Client("bob", "5E884898DA28047151D0E56F8DC6292773603D0D6AABBDD62A11EF721D1542D8");
+        when(p.getUser("bob")).thenReturn(bob);
     }
 
     @Test
