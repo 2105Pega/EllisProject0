@@ -1,9 +1,6 @@
 package com.revature.banking.dao;
 
-import com.revature.banking.models.Account;
 import com.revature.banking.models.Client;
-import com.revature.banking.models.Transaction;
-import com.revature.banking.models.User;
 import com.revature.banking.services.ConnectionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserDao implements Dao<Client, Integer>, Serializable {
     static Logger logger = LogManager.getLogger(UserDao.class);
@@ -22,7 +20,7 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
     public ArrayList<Client> getAll() {
         ArrayList<Client> users = new ArrayList<>();
         try (Connection conn = ConnectionManager.getConnection()) {
-            String sql = "select * from transactions";
+            String sql = "select * from clients";
             PreparedStatement statement = conn.prepareStatement(sql);
             ResultSet result = statement.executeQuery();
             while(result.next()) {
@@ -32,7 +30,7 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
             }
             return users;
         } catch (SQLException e) {
-            logger.error("error in database access when retrieving transactions");
+            logger.error("error in database access when retrieving clients");
             return null;
         }
     }
@@ -40,7 +38,7 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
     @Override
     public Client get(Integer id) {
         try (Connection conn = ConnectionManager.getConnection()) {
-            String sql = "select * from accounts where account_id = ?";
+            String sql = "select * from clients where client_id = ?";
 
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setInt(1, id);
@@ -52,7 +50,7 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
                     result.getString("passwordhash"),
                     result.getInt("client_id"));
         } catch (SQLException e) {
-            logger.error("error in database access when retrieving account by id");
+            logger.error("error in database access when retrieving client by id");
             return null;
         }
     }
@@ -108,6 +106,7 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
             statement.execute();
         } catch (SQLException e) {
             logger.error("error in database access when removing account");
+            e.printStackTrace();
         }
     }
 
@@ -123,6 +122,42 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
             statement.execute();
         } catch (SQLException e) {
             logger.error("error in database access when adding account-client relationship");
+            e.printStackTrace();
+        }
+    }
+
+    public List<Client> getAllAccountHolders(Integer accountId) {
+        ArrayList<Client> clients = new ArrayList<>();
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "select clients.username, clients.passwordhash, clients.client_id " +
+                    "from ((clients_accounts " +
+                    "inner join clients on clients.client_id = clients_accounts.client_id) " +
+                    "inner join accounts on accounts.account_id = clients_accounts.account_id) " +
+                    "where clients_accounts.account_id = ?;";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, accountId);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                clients.add(new Client(result.getString("username"),
+                        result.getString("passwordhash"),
+                        result.getInt("client_id")));
+            }
+            return clients;
+        } catch (SQLException e) {
+            logger.error("error in database access when retrieving accounts for client");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void removeAccountAssociations(Integer clientId) {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "delete from clients_accounts where client_id = ?";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, clientId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("error in database access when removling client account associations");
             e.printStackTrace();
         }
     }

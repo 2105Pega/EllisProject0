@@ -1,7 +1,6 @@
 package com.revature.banking.dao;
 
 import com.revature.banking.models.Account;
-import com.revature.banking.models.Transaction;
 import com.revature.banking.services.ConnectionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,10 +45,13 @@ public class AccountDao implements Dao<Account, Integer>, Serializable {
     public ArrayList<Account> getAll(Integer clientId) {
         ArrayList<Account> accounts = new ArrayList<>();
         try (Connection conn = ConnectionManager.getConnection()) {
-            String sql = "select * from accounts a" +
-                    "inner join clients_accounts" +
-                    "where accounts.account_id = clients_accounts.account_id";
+            String sql = "select accounts.account_id, accounts.balance, accounts.account_status, accounts.account_name " +
+                    "from ((clients_accounts " +
+                    "inner join clients on clients.client_id = clients_accounts.client_id) " +
+                    "inner join accounts on accounts.account_id = clients_accounts.account_id) " +
+                    "where clients_accounts.client_id = ?;";
             PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, clientId);
             ResultSet result = statement.executeQuery();
             while(result.next()) {
                 accounts.add(new Account(result.getInt("account_id"),
@@ -59,7 +61,8 @@ public class AccountDao implements Dao<Account, Integer>, Serializable {
             }
             return accounts;
         } catch (SQLException e) {
-            logger.error("error in database access when retrieving transactions");
+            logger.error("error in database access when retrieving accounts for client");
+            e.printStackTrace();
             return null;
         }
     }
@@ -67,19 +70,21 @@ public class AccountDao implements Dao<Account, Integer>, Serializable {
     public Account get(Integer id) {
         try (Connection conn = ConnectionManager.getConnection()) {
             String sql = "select * from accounts where account_id = ?";
-
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setInt(1, id);
 
             ResultSet result = statement.executeQuery();
-            result.next();
-
-            return new Account(result.getInt("client_id"),
-                    result.getDouble("balance"),
-                    result.getString("account_status"),
-                    result.getString("account_name"));
+            if (result.next()) {
+                return new Account(result.getInt("account_id"),
+                        result.getDouble("balance"),
+                        result.getString("account_status"),
+                        result.getString("account_name"));
+            } else {
+                return null;
+            }
         } catch (SQLException e) {
             logger.error("error in database access when retrieving account by id");
+            e.printStackTrace();
             return null;
         }
     }
@@ -108,18 +113,15 @@ public class AccountDao implements Dao<Account, Integer>, Serializable {
     }
     public void remove(Account account) {
         try (Connection conn = ConnectionManager.getConnection()) {
-            String sql = "delete from accounts where " +
-                    "balance = ? " +
-                    "and account_status = ? " +
-                    "and account_name = ? ";
+            String sql = "delete from clients_accounts where account_id = ?;"
+                    + "delete from accounts where account_id = ?";
 
             PreparedStatement statement = conn.prepareStatement(sql);
 
-            statement.setDouble(1, account.getBalance());
-            statement.setString(2, account.getStatus().toString());
-            statement.setString(3, account.getName());
+            statement.setInt(1, account.getId());
+            statement.setInt(2, account.getId());
 
-            statement.execute();
+            statement.executeUpdate();
         } catch (SQLException e) {
             logger.error("error in database access when removing account");
             e.printStackTrace();
@@ -128,22 +130,44 @@ public class AccountDao implements Dao<Account, Integer>, Serializable {
 
     public Account get(Integer clientId, String accountName) {
         try (Connection conn = ConnectionManager.getConnection()) {
-            String sql = "select get_account(?, ?)";
-            PreparedStatement statement = conn.prepareStatement(sql);
+            String sql = "select get_account(?, ?) as account_id";
+            CallableStatement statement = conn.prepareCall(sql);
             statement.setInt(1, clientId);
             statement.setString(2, accountName);
             ResultSet result = statement.executeQuery();
             result.next();
-            ArrayList<Account> accounts = new ArrayList<>();
-            return new Account(result.getInt("employee_id"),
-                    result.getDouble("balance"),
-                    result.getString("account_status"),
-                    result.getString("account_name"));
-
+            Integer accountId = result.getInt("account_id");
+            return get(accountId);
         } catch (SQLException e) {
-            logger.error("error in database access when retrieving account by id");
+            logger.error("error in database access when retrieving account by client and account name");
+            e.printStackTrace();
             return null;
         }
     }
 
+    public void approveAccount(Integer account_id) {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "update accounts set account_status = 'APPROVED' where account_id = ?";
+            PreparedStatement statement = conn.prepareCall(sql);
+            statement.setInt(1, account_id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("error in database access when approving account");
+            e.printStackTrace();
+        }
+    }
+
+    public void setBalance(Account account, double balance) {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "update accounts set balance = ? where account_id = ?";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setDouble(1, balance);
+            statement.setInt(2, account.getId());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("error in database access when updating balance");
+            e.printStackTrace();
+        }
+    }
 }

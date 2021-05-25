@@ -1,5 +1,6 @@
 package com.revature.banking.dao;
 
+import com.revature.banking.models.Account;
 import com.revature.banking.models.Transaction;
 import com.revature.banking.services.ConnectionManager;
 import org.apache.logging.log4j.LogManager;
@@ -11,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TransactionDao implements Dao<Transaction, Integer>, Serializable {
     static Logger logger = LogManager.getLogger(TransactionDao.class);
@@ -68,19 +70,54 @@ public class TransactionDao implements Dao<Transaction, Integer>, Serializable {
 
             statement.setInt(1, transaction.getAccount());
             statement.setInt(2, transaction.getDestination());
-            statement.setInt(3, transaction.getAccount());
+            statement.setInt(3, transaction.getInitiator());
             statement.setDouble(4, transaction.getAmount());
             statement.setString(5, transaction.getType().toString());
 
             statement.execute();
         } catch (SQLException e) {
             logger.error("error in database access when adding transaction");
+            e.printStackTrace();
         }
         return 0;
     }
 
     @Override
     public void remove(Transaction itemToRemove) {
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "delete from transactions where transaction_id = ?";
 
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, itemToRemove.getId());
+
+            statement.execute();
+        } catch (SQLException e) {
+            logger.error("error in database access when removing transaction by id");
+            e.printStackTrace();
+        }
+    }
+
+    public List<Transaction> getTransactionsFromAccount(Integer accountId) {
+        ArrayList<Transaction> transactions = new ArrayList<>();
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "select * from transactions where transactions.source_id = ? or transactions.destination_id = ?";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, accountId);
+            statement.setInt(2, accountId);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                transactions.add(new Transaction(result.getDouble("amount"),
+                        result.getInt("source_id"),
+                        result.getInt("destination_id"),
+                        result.getInt("initiator"),
+                        result.getString("transaction_type"),
+                        result.getInt("transaction_id")));
+            }
+            return transactions;
+        } catch (SQLException e) {
+            logger.error("error in database access when retrieving transactions for account");
+            e.printStackTrace();
+            return null;
+        }
     }
 }
