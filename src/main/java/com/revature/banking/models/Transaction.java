@@ -2,7 +2,7 @@ package com.revature.banking.models;
 
 import java.io.Serializable;
 
-public class Transaction implements Serializable {
+public class Transaction implements Serializable, Comparable<Transaction> {
     private final double amount;
     private final Integer account;
     private final Integer destination;
@@ -92,5 +92,10 @@ public class Transaction implements Serializable {
 
     public Integer getInitiator() {
         return initiator;
+    }
+
+    @Override
+    public int compareTo(Transaction t) {
+        return this.getId() - t.getId();
     }
 }
