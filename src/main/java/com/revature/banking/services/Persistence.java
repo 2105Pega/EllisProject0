@@ -7,6 +7,7 @@ import com.revature.banking.models.Transaction;
 import com.revature.banking.models.User;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +39,14 @@ public class Persistence {
         users.add(user);
     }
 
+    public List<Client> getAllAccountHolders(Integer accountId) {
+        return users.getAllAccountHolders(accountId);
+    }
+
+    public void deleteUser(String username) {
+        users.remove(getUser(username));
+    }
+
     //account management
     public ArrayList<Account> getAccounts() {
         return accounts.getAll();
@@ -56,8 +65,12 @@ public class Persistence {
     }
 
     public Account getAccount(String username, String accountName) {
-        Integer clientId = getUser(username).getId();
-        return accounts.get(clientId, accountName);
+        Client client = getUser(username);
+        if (client != null) {
+            Integer clientId = client.getId();
+            return accounts.get(clientId, accountName);
+        }
+        return null;
     }
 
     public Integer addAccount(Account account) {
@@ -66,6 +79,14 @@ public class Persistence {
 
     public void addAccountToUser(Integer accountId, Integer clientId) {
         users.addAccountToUser(accountId, clientId);
+    }
+
+    public void approveAccount(Integer accountId) {
+        accounts.approveAccount(accountId);
+    }
+
+    public void removeAccount(Account account) {
+        accounts.remove(account);
     }
 
     //transaction management
@@ -77,7 +98,35 @@ public class Persistence {
         return transactions.get(id);
     }
 
+    public List<Transaction> getTransactionsFromAccount(Integer accountId) {
+        return transactions.getTransactionsFromAccount(accountId);
+    }
+
     public void addTransaction(Transaction transaction) {
         transactions.add(transaction);
+    }
+
+    public void removeAccountAssociations(Integer clientId) {
+        users.removeAccountAssociations(clientId);
+    }
+
+    public void setBalance(Account account, double balance) {
+        accounts.setBalance(account, balance);
+    }
+
+    public void removeTransaction(Transaction transaction) {
+        transactions.remove(transaction);
+    }
+
+    public void removeTransactionsWithNoAccount() {
+        ArrayList<Transaction> transactionList = transactions.getAll();
+        ArrayList<Account> accountList = getAccounts();
+        for (Transaction transaction : transactionList) {
+            Integer account1 = transaction.getAccount();
+            Integer account2 = transaction.getDestination();
+            if (!accountList.contains(getAccount(account1)) && !accountList.contains(getAccount(account2))) {
+                removeTransaction(transaction);
+            }
+        }
     }
 }
