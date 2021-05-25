@@ -1,5 +1,7 @@
 package com.revature.banking.services;
 
+import com.revature.banking.dao.TransactionDao;
+import com.revature.banking.exceptions.TransactionFailedException;
 import com.revature.banking.models.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,20 +14,17 @@ public class TransactionManager {
         this.p = p;
     }
 
-    public Boolean withdraw(double amount, Integer id) {
+    public Boolean withdraw(double amount, Integer id) throws TransactionFailedException {
         Account account = p.getAccount(id);
 
         if (amount < 0) {
-            logger.trace("withdraw failed due to invalid amount");
-            return false;
+            throw new TransactionFailedException("withdraw failed due to invalid amount");
         } else if (amount > account.getBalance()) {
-            logger.trace("withdraw failed due to insufficient funds");
-            return false;
+            throw new TransactionFailedException("withdraw failed due to insufficient funds");
         } else if (!account.getStatus().equals(Account.Status.APPROVED)) {
-            logger.trace("withdraw failed because account is not approved");
-            return false;
-        }else {
-            account.setBalance(account.getBalance() - amount);
+            throw new TransactionFailedException("withdraw failed because account is not approved");
+        } else {
+            p.setBalance(account, account.getBalance() - amount);
             p.addTransaction(new Transaction(amount, id, Transaction.Type.WITHDRAW));
             logger.trace(String.format("successful withdraw of " + Format.f(amount) +
                     " from " + id.toString()));
@@ -33,55 +32,51 @@ public class TransactionManager {
         }
     }
 
-    public Boolean deposit(double amount, Integer id) {
+    public Boolean deposit(double amount, Integer id) throws TransactionFailedException {
         Account account = p.getAccount(id);
         if (account == null) {
-            logger.error("deposit failed because account does not exist");
-            return false;
+            throw new TransactionFailedException("deposit failed because account does not exist");
         } else if (!account.getStatus().equals(Account.Status.APPROVED)) {
-            logger.trace("transfer failed because account is not approved");
-            return false;
+            throw new TransactionFailedException("transfer failed because account is not approved");
         } else if (amount < 0) {
             logger.trace("deposit failed due to invalid amount");
-            return false;
         } else {
-            account.setBalance(account.getBalance() + amount);
+            p.setBalance(account, account.getBalance() + amount);
             p.addTransaction(new Transaction(amount, id, Transaction.Type.DEPOSIT));
             logger.trace(String.format("successful deposit of " + Format.f(amount) + " to "
                     + id.toString()));
             return true;
         }
+        return false;
     }
 
-    public Boolean transfer(double amount, Integer from, Integer to, String username) {
+    public Boolean transfer(double amount, Integer from, Integer to, String username) throws TransactionFailedException {
         Account source = p.getAccount(from);
         Account destination = p.getAccount(to);
 
         if (source == null) {
-            logger.trace("transfer failed because source account does not exist");
-            return false;
+            throw new TransactionFailedException("transfer failed because source account does not exist");
         } else if (destination == null) {
-            logger.trace("transfer failed because destination account does not exist");
-            return false;
+            throw new TransactionFailedException("transfer failed because destination account does not exist");
         } else if (!source.getStatus().equals(Account.Status.APPROVED)) {
-            logger.trace("transfer failed because source account is not approved");
-            return false;
+            throw new TransactionFailedException("transfer failed because source account is not approved");
         } else if (!destination.getStatus().equals(Account.Status.APPROVED)) {
-            logger.trace("transfer failed because destination account is not approved");
-            return false;
+            throw new TransactionFailedException("transfer failed because destination account is not approved");
         } else if (source.getBalance() < amount) {
-            logger.trace("transfer failed due to insufficient funds");
-            return false;
+            throw new TransactionFailedException("transfer failed due to insufficient funds");
         } else if (source.getId().equals(destination.getId())) {
-            logger.trace("transfer failed because source and destination are same account");
-            return false;
+            throw new TransactionFailedException("transfer failed because source and destination are same account");
         } else {
-            source.setBalance(source.getBalance() - amount);
-            destination.setBalance(destination.getBalance() + amount);
+            p.setBalance(source, source.getBalance() - amount);
+            p.setBalance(destination, destination.getBalance() + amount);
             p.addTransaction(new Transaction(amount, from, to, p.getUser(username).getId(), Transaction.Type.TRANSFER));
             logger.trace(String.format("successful transfer of " + Format.f(amount) + " from "
                     + from.toString() + " to " + to.toString()));
             return true;
         }
+    }
+
+    public void remove(Transaction transaction) {
+        p.removeTransaction(transaction);
     }
 }

@@ -32,22 +32,16 @@ public class AccountManager {
     }
 
     public void addUser(String username, Integer accountId) {
-        Account account = p.getAccount(accountId);
-        ArrayList<String> currentAccountHolders = account.getAccountHolders();
-        Boolean alreadyExists = currentAccountHolders.contains(username);
-        if (!alreadyExists) {
-            account.addAccountHolder(username);
-            Client c = p.getUser(username);
-            p.addAccountToUser(accountId, p.getUser(username).getId());
-        }
+        Client client = p.getUser(username);
+        p.addAccountToUser(accountId, client.getId());
     }
 
     public void approveAccount(Integer id) {
-        p.getAccount(id).setStatus(Account.Status.APPROVED);
+        p.approveAccount(id);
     }
 
     public void cancelAccount(Integer id) {
-        p.getAccount(id).setStatus(Account.Status.CANCELLED);
+        p.removeAccount(p.getAccount(id));
     }
 
 }

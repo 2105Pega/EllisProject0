@@ -2,11 +2,13 @@ package com.revature.banking.services;
 
 import com.revature.banking.models.Account;
 import com.revature.banking.models.Client;
+import com.revature.banking.models.Transaction;
 import com.revature.banking.models.User;
 import org.apache.logging.log4j.Logger;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -112,14 +114,59 @@ public class UserManager {
         User user = getUser(username);
         ArrayList<Account> accounts = p.getAccounts();
         for (Account account : accounts) {
-            ArrayList<String> accountHolders = account.getAccountHolders();
+            List<Client> accountHolders = p.getAllAccountHolders(account.getId());
             if  (accountHolders == null) return accountNames;
-            for (String accountHolder : accountHolders) {
-                if (accountHolder.equals(username)) {
+            for (Client accountHolder : accountHolders) {
+                if (accountHolder.getUsername().equals(username)) {
                     accountNames.add(account.getName());
                 }
             }
         }
         return accountNames;
+    }
+
+    public ArrayList<Account> getAccountIDs(String username) {
+        ArrayList<Account> accountIDs = new ArrayList<>();
+        User user = getUser(username);
+        ArrayList<Account> accounts = p.getAccounts();
+        for (Account account : accounts) {
+            List<Client> accountHolders = p.getAllAccountHolders(account.getId());
+            if  (accountHolders == null) return accountIDs;
+            for (Client accountHolder : accountHolders) {
+                if (accountHolder.getUsername().equals(username)) {
+                    accountIDs.add(account);
+                }
+            }
+        }
+        return accountIDs;
+    }
+
+    public void removeAssociatedTransactions(Integer id) {
+        ArrayList<Account> accounts = p.getAccounts(id);
+        //only remove the transaction if this client id is the only associated account holder
+        for (Account account : accounts) {
+            if (p.getAllAccountHolders(account.getId()).size() == 1) {
+                for (Transaction transaction : p.getTransactionsFromAccount(account.getId())) {
+                    p.removeTransaction(transaction);
+                }
+            }
+        }
+    }
+
+    public void deleteUser(String username) {
+        Integer id = p.getUser(username).getId();
+        ArrayList<Account> accounts = getAccountIDs(username);
+        ArrayList<Account> accountsToRemove = new ArrayList<>();
+        for (Account account : accounts) {
+            if (p.getAllAccountHolders(account.getId()).size() != 1) {
+                accountsToRemove.add(account);
+            }
+        }
+        p.removeAccountAssociations(id);
+        p.deleteUser(username);
+        for (Account account : accounts) {
+            p.removeAccount(account);
+        }
+        p.removeTransactionsWithNoAccount();
     }
 }
