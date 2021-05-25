@@ -22,8 +22,4 @@ public class Client extends User implements Serializable {
     public Integer getId() {
         return id;
     }
-
-    public List<Integer> getAccountIDs() {
-        return new ArrayList<Integer>();
-    }
 }
