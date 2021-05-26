@@ -198,21 +198,24 @@ public class UserInterface {
             System.out.print("Username of account holder to transfer to: ");
             getString();
             if (!um.userExists(input)) {
-                System.out.println("Account does not exist.");
+                System.out.println("User does not exist.");
                 return;
             }
             String targetAccountUsername = input;
-            System.out.print("Which account do you want to transfer to? Available accounts are: ");
+            Client client2 = p.getUser(targetAccountUsername);
+            System.out.println("Which account do you want to transfer to? Available accounts are: ");
+            showAccounts(client2);
             getString();
             String targetAccountName = input;
-            System.out.print("Input amount: $");
-            getDouble();
+
             Account targetAccount = p.getAccount(targetAccountUsername, targetAccountName);
             if (targetAccount == null) {
                 System.out.println("Account does not exist.");
                 return;
             }
             try {
+                System.out.print("Input amount: $");
+                getDouble();
                 tm.transfer(doubleInput, account.getId(), targetAccount.getId(), "admin");
                 System.out.println("Transfer succeeded.");
             } catch (TransactionFailedException e) {
@@ -310,12 +313,39 @@ public class UserInterface {
             return;
         }
         Integer id = account.getId();
-        am.cancelAccount(id);
+        Double balance = account.getBalance();
+        if (balance.equals(0.0)) {
+            am.cancelAccount(id);
+            p.removeTransactionsWithNoAccount();
+            System.out.println("Cancellation successful.");
+        } else {
+            System.out.println("You can only cancel accounts with a balance of $0.00.");
+        }
+    }
+
+    private void cancelAccount(Client client) {
+        System.out.println("Name of account to cancel: ");
+        getString();
+        String accountName = input;
+        Account account = p.getAccount(client.getUsername(), accountName);
+        if (account == null) {
+            System.out.println("Account does not exist.");
+            return;
+        }
+        Integer id = account.getId();
+        Double balance = account.getBalance();
+        if (balance.equals(0.0)) {
+            am.cancelAccount(id);
+            p.removeTransactionsWithNoAccount();
+            System.out.println("Cancellation successful.");
+        } else {
+            System.out.println("You can only cancel accounts with a balance of $0.00.");
+        }
     }
 
     private void clientSession(Client client) {
         while (!input.equals("E")) {
-            System.out.println("Do you want to apply for an account(A), withdraw(W), deposit(D), transfer(T), view accounts(V), or exit(E)?");
+            System.out.println("Do you want to apply for an account(A), withdraw(W), deposit(D), transfer(T), view accounts(V), cancel account(C), or exit(E)?");
             getString();
             select:
             switch (input) {
@@ -334,6 +364,9 @@ public class UserInterface {
                 case "V":
                     showAccounts(client);
                     showTransactions(client);
+                    break;
+                case "C":
+                    cancelAccount(client);
                     break;
                 case "E":
                     break;
@@ -379,7 +412,7 @@ public class UserInterface {
             System.out.println("Cannot create accounts with duplicate names.");
             return;
         }
-        Account newAccount = am.createAccount(client.getUsername(), accountName);
+        Account newAccount;
 
         if (joint) {
             ArrayList<String> existingAccountsJoint = um.getAccountNames(jointUsername);
@@ -387,7 +420,10 @@ public class UserInterface {
                 System.out.println("Joint holder already has an account with that name, you cannot create accounts with duplicate names.");
                 return;
             }
+            newAccount = am.createAccount(client.getUsername(), accountName);
             am.addUser(jointUsername, newAccount.getId());
+        } else {
+            newAccount = am.createAccount(client.getUsername(), accountName);
         }
         System.out.println("Account created, it must be approved by an employee before use.");
     }
@@ -440,29 +476,22 @@ public class UserInterface {
         if (account == null) {
             System.out.println("Account does not exist.");
         } else {
-            System.out.print("Username of account holder to transfer to: ");
+            System.out.println("Which account do you want to transfer to?");
             getString();
-            String targetAccountUsername = input;
-            if (um.clientExists(targetAccountUsername)) {
-                System.out.print("Which account do you want to transfer to? Available accounts are: ");
-                showAccounts(p.getUser(targetAccountUsername));
-                getString();
-                String targetAccountName = input;
-                System.out.print("Input amount: $");
-                getDouble();
-                Account targetAccount = p.getAccount(targetAccountUsername, targetAccountName);
-                if (targetAccount == null) {
-                    System.out.println("Account does not exist.");
-                } else  {
-                    try {
-                        tm.transfer(doubleInput, account.getId(), targetAccount.getId(), user.getUsername());
-                        System.out.println("Transfer succeeded.");
-                    } catch (TransactionFailedException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
+            String targetAccountName = input;
+
+            Account targetAccount = p.getAccount(user.getUsername(), targetAccountName);
+            if (targetAccount == null) {
+                System.out.println("Account does not exist.");
             } else {
-                System.out.println("Client does not exist.");
+                try {
+                    System.out.print("Input amount: $");
+                    getDouble();
+                    tm.transfer(doubleInput, account.getId(), targetAccount.getId(), user.getUsername());
+                    System.out.println("Transfer succeeded.");
+                } catch (TransactionFailedException e) {
+                    System.out.println(e.getMessage());
+                }
             }
         }
     }
@@ -511,7 +540,10 @@ public class UserInterface {
         for (Account account : p.getAccounts(client.getId())) {
             transactions.addAll(p.getTransactionsFromAccount(account.getId()));
         }
-        ArrayList<Transaction> transactionArray = new ArrayList<>(transactions);
+        ArrayList<Transaction> transactionArray = new ArrayList<>();
+        transactionArray.addAll(transactions);
+        Collections.sort(transactionArray);
+
         for (Transaction transaction : transactionArray) {
             double amount = transaction.getAmount();
             String accountName = p.getAccount(transaction.getAccount()).getName();
@@ -531,7 +563,12 @@ public class UserInterface {
             System.out.print(accountName + " of " + Format.f(amount));
             if (transaction.getType().equals(Transaction.Type.TRANSFER)) {
                 String destination = p.getAccount(transaction.getDestination()).getName();
-                System.out.println(" to " + destination + " by " + p.getUser(transaction.getInitiator()).getUsername());
+                Boolean initiatorExist = !transaction.getInitiator().equals(0);
+                if (initiatorExist) {
+                    System.out.println(" to " + destination + " by " + p.getUser(transaction.getInitiator()).getUsername());
+                } else {
+                    System.out.println(" to " + destination + " by admin");
+                }
             } else {
                 System.out.println("");
             }
@@ -544,7 +581,7 @@ public class UserInterface {
             String sql = "select * from logs";
             PreparedStatement statement = conn.prepareStatement(sql);
             ResultSet result = statement.executeQuery();
-            while(result.next()) {
+            while (result.next()) {
                 System.out.println(result.getString("eventdate") + " " +
                         result.getString("level") + " " +
                         result.getString("logger") + " " +

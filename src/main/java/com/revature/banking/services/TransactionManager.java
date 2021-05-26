@@ -69,7 +69,11 @@ public class TransactionManager {
         } else {
             p.setBalance(source, source.getBalance() - amount);
             p.setBalance(destination, destination.getBalance() + amount);
-            p.addTransaction(new Transaction(amount, from, to, p.getUser(username).getId(), Transaction.Type.TRANSFER));
+            try {
+                p.addTransaction(new Transaction(amount, from, to, p.getUser(username).getId(), Transaction.Type.TRANSFER));
+            } catch (Exception e) {
+                p.addTransaction(new Transaction(amount, from, to, 0, Transaction.Type.TRANSFER));
+            }
             logger.trace(String.format("successful transfer of " + Format.f(amount) + " from "
                     + from.toString() + " to " + to.toString()));
             return true;

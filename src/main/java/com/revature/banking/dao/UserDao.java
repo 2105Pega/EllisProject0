@@ -72,7 +72,6 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
             }
         } catch (SQLException e) {
             logger.error("error in database access when retrieving client by username");
-            e.printStackTrace();
             return null;
         }
     }
@@ -89,7 +88,6 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
             statement.execute();
         } catch (SQLException e) {
             logger.error("error in database access when adding account");
-            e.printStackTrace();
         }
         return 0;
     }
@@ -145,7 +143,6 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
             return clients;
         } catch (SQLException e) {
             logger.error("error in database access when retrieving accounts for client");
-            e.printStackTrace();
             return null;
         }
     }
@@ -158,7 +155,6 @@ public class UserDao implements Dao<Client, Integer>, Serializable {
             statement.executeUpdate();
         } catch (SQLException e) {
             logger.error("error in database access when removling client account associations");
-            e.printStackTrace();
         }
     }
 }
