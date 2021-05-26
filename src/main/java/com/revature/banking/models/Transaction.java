@@ -98,4 +98,12 @@ public class Transaction implements Serializable, Comparable<Transaction> {
     public int compareTo(Transaction t) {
         return this.getId() - t.getId();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Transaction) {
+            return ((((Transaction) o).getId()) == this.getId());
+        }
+        return false;
+    }
 }

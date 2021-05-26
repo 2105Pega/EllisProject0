@@ -68,4 +68,12 @@ public class Account implements Serializable {
         this.status = status;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Account) {
+            return ((Account)o).getId().equals(this.getId());
+        }
+        return false;
+    }
+
 }
