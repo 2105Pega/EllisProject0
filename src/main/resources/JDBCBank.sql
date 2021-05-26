@@ -25,17 +25,6 @@ create table transactions (
     transaction_type varchar(10)
 );
 
-create table deleted_clients (
-    client_id integer primary key,
-    username varchar(40)
-);
-
-create table deleted_accounts (
-    account_id integer primary key,
-    balance double precision,
-    account_name varchar(40)
-);
-
 create table logs (
 	eventDate varchar(255),
 	level varchar(255),
