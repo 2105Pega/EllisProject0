@@ -537,16 +537,26 @@ public class UserInterface {
     private void showTransactions(Client client) {
         if (client == null) return;
         HashSet<Transaction> transactions = new HashSet<>();
-        for (Account account : p.getAccounts(client.getId())) {
-            transactions.addAll(p.getTransactionsFromAccount(account.getId()));
-        }
         ArrayList<Transaction> transactionArray = new ArrayList<>();
-        transactionArray.addAll(transactions);
+
+        for (Account account : p.getAccounts(client.getId())) {
+            for (Transaction transaction : p.getTransactionsFromAccount(account.getId())) {
+                if (!transactionArray.contains(transaction)) {
+                    transactionArray.add(transaction);
+                }
+            }
+        }
         Collections.sort(transactionArray);
 
         for (Transaction transaction : transactionArray) {
             double amount = transaction.getAmount();
-            String accountName = p.getAccount(transaction.getAccount()).getName();
+            Account account = p.getAccount(transaction.getAccount());
+            String accountName;
+            if (account == null) {
+                 accountName = "deleted account";
+            } else {
+                 accountName = p.getAccount(transaction.getAccount()).getName();
+            }
             switch (transaction.getType()) {
                 case WITHDRAW:
                     System.out.print("Withdraw from ");
@@ -565,7 +575,12 @@ public class UserInterface {
                 String destination = p.getAccount(transaction.getDestination()).getName();
                 Boolean initiatorExist = !transaction.getInitiator().equals(0);
                 if (initiatorExist) {
-                    System.out.println(" to " + destination + " by " + p.getUser(transaction.getInitiator()).getUsername());
+                    Client initiator = p.getUser(transaction.getInitiator());
+                    if (initiator == null) {
+                        System.out.println(" to " + destination + " by deleted user");
+                    } else {
+                        System.out.println(" to " + destination + " by " + p.getUser(transaction.getInitiator()).getUsername());
+                    }
                 } else {
                     System.out.println(" to " + destination + " by admin");
                 }

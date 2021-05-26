@@ -158,13 +158,13 @@ public class UserManager {
         ArrayList<Account> accounts = getAccountIDs(username);
         ArrayList<Account> accountsToRemove = new ArrayList<>();
         for (Account account : accounts) {
-            if (p.getAllAccountHolders(account.getId()).size() != 1) {
+            if (p.getAllAccountHolders(account.getId()).size() == 1) {
                 accountsToRemove.add(account);
             }
         }
         p.removeAccountAssociations(id);
         p.deleteUser(username);
-        for (Account account : accounts) {
+        for (Account account : accountsToRemove) {
             p.removeAccount(account);
         }
         p.removeTransactionsWithNoAccount();
