@@ -1,29 +1,37 @@
 # Project 0 Banking App
 
+## Instructions
 
-- logs are stored at logs/bankingapp.log
-- application data is stored in src/main/resources/bankdata.txt
-- the data file checked into the repo has these accounts:
-  - alice : password is maven, account type is client
-  - bob : password is java, account type is client
-  - charlie : password is chocolate, account type is employee
+Build with Maven and execute tests by running build.bat (Windows) or build.sh (Linux/Mac).
+
+Run the project with run.bat (Windows) or build.sh (Linux/Mac).
+
+You will need a jdbcbank.properties files with the correct database credentials to run this application.
+
+Logs are stored in both logs/bankingapp.log and the database configured in the properties file. The logs stored in the database can be viewed by the admin in the application.
+
+Users currently available in database:
+
+admin : adminpassword
+
+alice : apass
+
+bob : bpass
+
 ## Class Hierarchy
 
 ### Models
 
 - User
 - Client : User
-- Employee : User
 - Account
 - Transaction
-- Deposit : Transaction
-- Withdraw : Transaction
-- Transfer : Transaction
 
 ### Services
 - UserManager
 - TransactionManager
 - AccountManager
+- ConnectionManager
 - Dao
 - UserDao: Dao
 - TransactionDao : Dao
@@ -31,6 +39,9 @@
 - Format
 - Input
 - Persistence
+
+### Exceptions
+- TransactionFailedException
 
 ### Controller
 - Driver
