@@ -5,6 +5,10 @@ import com.revature.banking.models.*;
 import com.revature.banking.services.*;
 
 import java.lang.reflect.Array;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
@@ -107,7 +111,7 @@ public class UserInterface {
 
     private void employeeSession() {
         while (!input.equals("E")) {
-            System.out.println("Do you want to approve an account(A), cancel an account(C), remove client(R), withdraw(W), deposit(D), transfer (T), view info(V), or exit(E)?");
+            System.out.println("Do you want to approve an account(A), cancel an account(C), remove client(R), withdraw(W), deposit(D), transfer (T), view info(V), view logs(L), or exit(E)?");
             getString();
             select:
             switch (input) {
@@ -131,6 +135,9 @@ public class UserInterface {
                     break;
                 case "V":
                     viewInfo();
+                    break;
+                case "L":
+                    viewLogs();
                     break;
                 case "E":
                     break;
@@ -529,5 +536,24 @@ public class UserInterface {
                 System.out.println("");
             }
         }
+    }
+
+    private void viewLogs() {
+        System.out.println("Displaying logs:\n");
+        try (Connection conn = ConnectionManager.getConnection()) {
+            String sql = "select * from logs";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet result = statement.executeQuery();
+            while(result.next()) {
+                System.out.println(result.getString("eventdate") + " " +
+                        result.getString("level") + " " +
+                        result.getString("logger") + " " +
+                        result.getString("message"));
+            }
+
+        } catch (SQLException e) {
+            logger.error("error in database access when viewing logs");
+        }
+        System.out.println("");
     }
 }

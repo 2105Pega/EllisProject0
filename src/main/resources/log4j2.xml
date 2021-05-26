@@ -7,11 +7,19 @@
         <File name="FileAppender" fileName="logs/bankingapp.log" immediateFlush="false" append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
+        <JDBC name="databaseAppender" tableName="logs">
+            <ConnectionFactory class="com.revature.banking.services.ConnectionManager" method="getConnection" />
+            <Column name="eventDate" isEventTimestamp="true" isUnicode="false" />
+            <Column name="level" pattern="%level" isUnicode="false" />
+            <Column name="logger" pattern="%logger" isUnicode="false" />
+            <Column name="message" pattern="%message" isUnicode="false" />
+            <Column name="exception" pattern="%ex{full}" isUnicode="false" />
+        </JDBC>
     </Appenders>
     <Loggers>
         <Root level="all">
             <AppenderRef ref="FileAppender"/>
-            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="databaseAppender"/>
         </Root>
     </Loggers>
 </Configuration>
